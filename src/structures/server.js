@@ -5,12 +5,13 @@ const app = express();
 const path = require('path');
 const data = require('../product_data/cpu/data.json');
 const config = require('../../config.json')
-const { CartItem } = require('../schema/cartItem')
+const { CartItems } = require('../schema/cartItems')
+const { Users } = require('../schema/users')
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
 });
 
 const db = mongoose.connection;
@@ -29,18 +30,18 @@ app.get('/api/products', (req, res) => {
 });
 
 app.post('/api/cart/add', async (req, res) => {
-    const { id, name, price, imageUrl, quantity } = req.body;
-    console.log(id)
+    const { id, name, category, price, imageUrl, quantity } = req.body;
 
     try {
-        let cartItem = await CartItem.findOne({ id });
+        let cartItem = await CartItems.findOne({ id });
 
         if (cartItem) {
             cartItem.quantity += quantity;
         } else {
-            cartItem = new CartItem({
+            cartItem = new CartItems({
                 id,
                 name,
+                category,
                 price,
                 imageUrl,
                 quantity,
@@ -57,7 +58,7 @@ app.post('/api/cart/add', async (req, res) => {
 
 app.get('/api/cart/items', async (req, res) => {
     try {
-        const cartItems = await CartItem.find();
+        const cartItems = await CartItems.find();
         res.status(200).json(cartItems);
     } catch (err) {
         console.error('Error fetching cart items:', err);
@@ -69,7 +70,7 @@ app.delete('/api/cart/remove/:id', async (req, res) => {
     const productId = req.params.id;
 
     try {
-        await CartItem.deleteOne({ id: productId });
+        await CartItems.deleteOne({ id: productId });
         res.status(200).send('Item removed from cart');
     } catch (err) {
         console.error('Error removing item from cart:', err);
@@ -77,41 +78,69 @@ app.delete('/api/cart/remove/:id', async (req, res) => {
     }
 });
 
-app.put('/api/cart/update/:productId', (req, res) => {
+app.put('/api/cart/update/:productId', async (req, res) => {
     const productId = req.params.productId;
     const { operation } = req.body;
 
-    CartItem.findOne({ id: productId })
-        .then(cartItem => {
-            if (!cartItem) {
-                return res.status(404).send('Cart item not found');
-            }
+    try {
+        const cartItem = await CartItems.findOne({ id: productId });
 
-            if (operation === 'increase') {
-                cartItem.quantity++;
-            } else if (operation === 'decrease') {
-                if (cartItem.quantity > 1) {
-                    cartItem.quantity--;
-                } else {
-                    return res.status(400).send('Quantity cannot be less than 1');
-                }
+        if (!cartItem) {
+            return res.status(404).send('Cart item not found');
+        }
+
+        if (operation === 'increase') {
+            cartItem.quantity++;
+        } else if (operation === 'decrease') {
+            if (cartItem.quantity > 1) {
+                cartItem.quantity--;
             } else {
-                return res.status(400).send('Invalid operation');
+                return res.status(400).send('Quantity cannot be less than 1');
             }
+        } else {
+            return res.status(400).send('Invalid operation');
+        }
 
-            cartItem.save()
-                .then(() => {
-                    res.status(200).send('Cart item quantity updated successfully');
-                })
-                .catch(err => {
-                    console.error('Error updating cart item:', err);
-                    res.status(500).send('Error updating cart item');
-                });
-        })
-        .catch(err => {
-            console.error('Error finding cart item:', err);
-            res.status(500).send('Error finding cart item');
-        });
+        await cartItem.save();
+        res.status(200).send('Cart item quantity updated successfully');
+    } catch (err) {
+        console.error('Error updating cart item:', err);
+        res.status(500).send('Error updating cart item');
+    }
+});
+
+app.post('/api/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const user = await Users.findOne({ email, password });
+        if (user) {
+            res.status(200).send('Login successful');
+        } else {
+            res.status(401).send('Invalid email or password');
+        }
+    } catch (err) {
+        console.error('Error during login:', err);
+        res.status(500).send('Error during login');
+    }
+});
+
+app.post('/api/register', async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        const existingUser = await Users.findOne({ email });
+        if (existingUser) {
+            res.status(400).send('User already exists');
+        } else {
+            const newUser = new Users({ email, password });
+            await newUser.save();
+            res.status(201).send('User registered successfully');
+        }
+    } catch (err) {
+        console.error('Error during registration:', err);
+        res.status(500).send('Error during registration');
+    }
 });
 
 const PORT = 3000;

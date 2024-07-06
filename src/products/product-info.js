@@ -43,22 +43,24 @@ function renderProductDetails(product) {
         <div class="col-md-6">
             <h2>${product.name}</h2>
             <p>Price: Rs ${product.price.toLocaleString()}</p>
+            <p>Category: ${product.category}</p>
             <p>Description: ${product.description}</p>
             <h4>Features:</h4>
             <ul>
                 ${product.features.map(feature => `<li>${feature}</li>`).join('')}
             </ul>
-            <a href="#" class="btn btn-primary" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
+            <a href="#" class="btn btn-primary" onclick="addToCart(${product.id}, '${product.name}', '${product.category}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
         </div>
     `;
 
     productDetailsContainer.innerHTML = productHTML;
 }
 
-window.addToCart = function (productId, productName, productPrice, productImageUrl) {
+window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
     const cartItem = {
         id: productId,
         name: productName,
+        category: productCategory,
         price: productPrice,
         imageUrl: productImageUrl,
         quantity: 1

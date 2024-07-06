@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="card-body">
                             <h5 class="card-title" onclick="redirectToProductPage(${product.id})">${product.name}</h5>
                             <p class="card-text">Rs: ${product.price.toLocaleString()} <del>Rs: ${product.originalPrice.toLocaleString()}</del></p>
-                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
+                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.id}, '${product.name}', '${product.category}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
                         </div>
                     </div>
                 </div>
@@ -80,14 +80,16 @@ document.addEventListener("DOMContentLoaded", function () {
         renderProducts(sortedProducts, currentPage);
     }
 });
+
 function redirectToProductPage(productId) {
     window.location.href = `../products/product-info.html?id=${productId}`;
 }
 
-window.addToCart = function (productId, productName, productPrice, productImageUrl) {
+window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
     const cartItem = {
         id: productId,
         name: productName,
+        category: productCategory,
         price: productPrice,
         imageUrl: productImageUrl,
         quantity: 1
@@ -110,3 +112,63 @@ window.addToCart = function (productId, productName, productPrice, productImageU
             console.error('Error adding product to cart:', error);
         });
 };
+
+document.querySelector('.btn-primary.mr-2').addEventListener('click', function (event) {
+    event.preventDefault();
+    $('#loginModal').modal('show');
+});
+
+document.querySelector('.btn-secondary.mr-2').addEventListener('click', function (event) {
+    event.preventDefault();
+    $('#registerModal').modal('show');
+});
+
+document.getElementById('loginForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+
+    fetch('http://localhost:3000/api/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('Login successful');
+                $('#loginModal').modal('hide');
+            } else {
+                throw new Error('Login failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error during login:', error);
+        });
+});
+
+document.getElementById('registerForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+
+    fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    })
+        .then(response => {
+            if (response.ok) {
+                console.log('Registration successful');
+                $('#registerModal').modal('hide');
+            } else {
+                throw new Error('Registration failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error during registration:', error);
+        });
+});
