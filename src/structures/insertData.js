@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const config = require('./config.json');
-const { Products } = require('./src/schema/products'); // Adjust the path as necessary
+const config = require('../../config.json');
+const { Products } = require('../schema/products');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -20,7 +20,7 @@ db.once('open', async () => {
             price: 1000,
             discountRate: 10,
             category: "ram",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 1",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -31,7 +31,7 @@ db.once('open', async () => {
             price: 2000,
             discountRate: 15,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 2",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -42,7 +42,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -53,7 +53,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -64,7 +64,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -75,7 +75,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -86,7 +86,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -97,7 +97,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -108,7 +108,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -119,7 +119,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -130,7 +130,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -141,7 +141,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -152,7 +152,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -163,7 +163,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -174,7 +174,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -185,7 +185,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -196,7 +196,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -207,7 +207,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -218,7 +218,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
@@ -229,7 +229,7 @@ db.once('open', async () => {
             price: 3000,
             discountRate: 20,
             category: "cpu",
-            imageUrl: "./src/product_images/cpu/5600G-500x500-1.png",
+            imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
             inStock: true
