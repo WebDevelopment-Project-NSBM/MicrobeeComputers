@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data); // Log the response to inspect it
+                console.log(data);
                 if (data.email) {
                     renderUserProfile(data);
                 } else {
@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.removeItem('userId'); // Clear the user ID from localStorage
-                    window.location.href = '../auth/auth.html?modal=login'; // Redirect to login page
+                    localStorage.removeItem('userId');
+                    window.location.href = '../auth/auth.html?modal=login';
                 } else {
                     console.error('Error logging out:', data.message);
                 }

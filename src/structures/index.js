@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 sortedProducts = data;
-                console.log(sortedProducts)
+                console.log(sortedProducts);
                 renderProducts(sortedProducts, currentPage);
             })
             .catch(error => {
@@ -27,14 +27,16 @@ document.addEventListener("DOMContentLoaded", function () {
         const paginatedProducts = products.slice(start, end);
 
         paginatedProducts.forEach(product => {
+            const originalPrice = product.price + (product.discountRate / 100 * product.price);
+            const discountPrice = product.price;
             const productHTML = `
                 <div class="col-md-3 col-sm-6 mb-4">
                     <div class="card">
-                        <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" onclick="redirectToProductPage(${product.id})">
+                        <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})">
                         <div class="card-body">
-                            <h5 class="card-title" onclick="redirectToProductPage(${product.id})">${product.name}</h5>
-                            <p class="card-text">Rs: ${product.price.toLocaleString()} <del>Rs: ${product.originalPrice.toLocaleString()}</del></p>
-                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.id}, '${product.name}', '${product.category}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
+                            <h5 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h5>
+                            <p class="card-text">Rs: ${discountPrice.toLocaleString()} <del>Rs: ${originalPrice.toLocaleString()}</del></p>
+                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.pro_id}, '${product.name}', '${product.category}', ${discountPrice}, '${product.imageUrl}')">Add to cart</a>
                         </div>
                     </div>
                 </div>
@@ -82,12 +84,12 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function redirectToProductPage(productId) {
-    window.location.href = `../products/product-info.html?id=${productId}`;
+    window.location.href = `../products/product-info.html?pro_id=${productId}`;
 }
 
 window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
     const cartItem = {
-        id: productId,
+        pro_id: productId,
         name: productName,
         category: productCategory,
         price: productPrice,

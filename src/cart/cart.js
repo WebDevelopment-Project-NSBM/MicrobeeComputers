@@ -23,9 +23,9 @@ function renderCart() {
                                 <h5 class="card-title">${item.name}</h5>
                                 <p class="card-text">Price: Rs ${item.price.toLocaleString()}</p>
                                 <p class="card-text">Quantity: ${item.quantity}</p>
-                                <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.id})">Remove</button>
-                                <button class="btn btn-primary btn-sm" onclick="increaseQuantity(${item.id})">+</button>
-                                <button class="btn btn-primary btn-sm" onclick="decreaseQuantity(${item.id})">-</button>
+                                <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.pro_id})">Remove</button>
+                                <button class="btn btn-primary btn-sm" onclick="increaseQuantity(${item.pro_id})">+</button>
+                                <button class="btn btn-primary btn-sm" onclick="decreaseQuantity(${item.pro_id})">-</button>
                             </div>
                         </div>
                     </div>
@@ -33,7 +33,6 @@ function renderCart() {
                 cartItemsContainer.insertAdjacentHTML('beforeend', itemHTML);
             });
 
-            //check out button not finished
             const checkoutButton = `
                 <div class="col-md-12 mt-3">
                     <button class="btn btn-success btn-block">Checkout</button>

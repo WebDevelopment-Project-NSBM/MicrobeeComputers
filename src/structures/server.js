@@ -1,12 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const app = express();
 const path = require('path');
-const data = require('../product_data/cpu/data.json');
 const config = require('../../config.json');
 const { CartItems } = require('../schema/cartItems');
 const { Users } = require('../schema/users');
+const { Products } = require('../schema/products');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -20,26 +19,32 @@ db.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
+const app = express();
 app.use(cors());
 app.use(express.json());
-
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/api/products', (req, res) => {
-    res.json(data);
+app.get('/api/products', async (req, res) => {
+    try {
+        const products = await Products.find();
+        res.status(200).json(products);
+    } catch (err) {
+        console.error('Error fetching products:', err);
+        res.status(500).send('Error fetching products');
+    }
 });
 
 app.post('/api/cart/add', async (req, res) => {
-    const { id, name, category, price, imageUrl, quantity } = req.body;
+    const { pro_id, name, category, price, imageUrl, quantity } = req.body;
 
     try {
-        let cartItem = await CartItems.findOne({ id });
+        let cartItem = await CartItems.findOne({ pro_id });
 
         if (cartItem) {
             cartItem.quantity += quantity;
         } else {
             cartItem = new CartItems({
-                id,
+                pro_id,
                 name,
                 category,
                 price,
@@ -66,11 +71,11 @@ app.get('/api/cart/items', async (req, res) => {
     }
 });
 
-app.delete('/api/cart/remove/:id', async (req, res) => {
-    const productId = req.params.id;
+app.delete('/api/cart/remove/:pro_id', async (req, res) => {
+    const pro_id = req.params.pro_id;
 
     try {
-        await CartItems.deleteOne({ id: productId });
+        await CartItems.deleteOne({ pro_id });
         res.status(200).send('Item removed from cart');
     } catch (err) {
         console.error('Error removing item from cart:', err);
@@ -78,12 +83,12 @@ app.delete('/api/cart/remove/:id', async (req, res) => {
     }
 });
 
-app.put('/api/cart/update/:productId', async (req, res) => {
-    const productId = req.params.productId;
+app.put('/api/cart/update/:pro_id', async (req, res) => {
+    const pro_id = req.params.pro_id;
     const { operation } = req.body;
 
     try {
-        const cartItem = await CartItems.findOne({ id: productId });
+        const cartItem = await CartItems.findOne({ pro_id });
 
         if (!cartItem) {
             return res.status(404).send('Cart item not found');
@@ -158,8 +163,8 @@ app.get('/api/user/profile', async (req, res) => {
         res.status(500).send('Error fetching user profile');
     }
 });
+
 app.post('/api/logout', (req, res) => {
-    // No specific server-side session cleanup needed, just respond to the client
     res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 

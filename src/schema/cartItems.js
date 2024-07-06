@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const cartItemSchema = new Schema({
-    id: { type: Number, required: true },
+    pro_id: { type: Number, required: true },
     name: { type: String, required: true },
     category: { type: String, required: true },
     price: { type: Number, required: true },
