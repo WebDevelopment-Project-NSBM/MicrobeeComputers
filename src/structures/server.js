@@ -5,6 +5,7 @@ const app = express();
 const path = require('path');
 const data = require('../product_data/cpu/data.json');
 const config = require('../../config.json')
+const { CartItem } = require('../schema/cartItem')
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -17,16 +18,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => {
     console.log('Connected to MongoDB');
 });
-
-const cartItemSchema = new mongoose.Schema({
-    id: Number,
-    name: String,
-    price: Number,
-    imageUrl: String,
-    quantity: Number,
-});
-
-const CartItem = mongoose.model('CartItem', cartItemSchema);
 
 app.use(cors());
 app.use(express.json());
