@@ -1,7 +1,7 @@
 # NSBM-Website-item-list
 This is the item list of web assignment
 
-#DO NOT SHARE CONFIG.JSON FILE TO ANYONE!!!
+# DO NOT SHARE CONFIG.JSON FILE TO ANYONE!!!
 
 # To run this
 ##You need to have node.js installed on your computer
