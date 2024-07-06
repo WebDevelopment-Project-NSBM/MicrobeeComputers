@@ -9,11 +9,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "express-session": "^1.18.0",
-    "i": "^0.3.7",
     "mongoose": "^6.12.6",
     "npm": "^10.8.1"
   }
