@@ -2,16 +2,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsPerPage = 12;
     let currentPage = 1;
     let sortedProducts = [];
+    let originalProducts = [];
 
     const productContainer = document.getElementById('productContainer');
     const paginationContainer = document.getElementById('paginationContainer');
+    const productCountElement = document.getElementById('productCount');
+    const sortByElement = document.getElementById('sortBy');
 
     function fetchProducts() {
         fetch('http://localhost:3000/api/products')
             .then(response => response.json())
             .then(data => {
                 sortedProducts = data;
-                console.log(sortedProducts);
+                originalProducts = data;
+                updateProductCount(data.length);
                 renderProducts(sortedProducts, currentPage);
             })
             .catch(error => {
@@ -19,6 +23,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
     fetchProducts();
+
+    function updateProductCount(count) {
+        productCountElement.textContent = `${count} Products found`;
+    }
 
     function renderProducts(products, page = 1) {
         productContainer.innerHTML = '';
@@ -30,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const originalPrice = product.price + (product.discountRate / 100 * product.price);
             const discountPrice = product.price;
             const productHTML = `
-                <div class="col-md-3 col-sm-6 mb-4">
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-item">
                     <div class="card">
                         <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})">
                         <div class="card-body">
@@ -81,6 +89,28 @@ document.addEventListener("DOMContentLoaded", function () {
         currentPage = page;
         renderProducts(sortedProducts, currentPage);
     }
+
+    sortByElement.addEventListener('change', function () {
+        const sortBy = sortByElement.value;
+        switch (sortBy) {
+            case 'popularity':
+                sortedProducts.sort((a, b) => b.popularity - a.popularity);
+                break;
+            case 'latest':
+                sortedProducts.sort((a, b) => new Date(b.latest) - new Date(a.latest));
+                break;
+            case 'priceLowToHigh':
+                sortedProducts.sort((a, b) => a.price - b.price);
+                break;
+            case 'priceHighToLow':
+                sortedProducts.sort((a, b) => b.price - a.price);
+                break;
+            default:
+                sortedProducts = originalProducts.slice();
+                break;
+        }
+        renderProducts(sortedProducts, 1);
+    });
 });
 
 function redirectToProductPage(productId) {

@@ -23,7 +23,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 1",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 2,
@@ -34,7 +36,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 2",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 3,
@@ -45,7 +49,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 4,
@@ -56,7 +62,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 3
         },
         {
             pro_id: 5,
@@ -67,7 +75,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 3
         },
         {
             pro_id: 6,
@@ -78,7 +88,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 7,
@@ -89,7 +101,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 8,
@@ -100,7 +114,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 9,
@@ -111,7 +127,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 10,
@@ -122,7 +140,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 11,
@@ -133,7 +153,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 3
         },
         {
             pro_id: 12,
@@ -144,7 +166,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 13,
@@ -155,7 +179,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 14,
@@ -166,7 +192,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 15,
@@ -177,7 +205,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 3
         },
         {
             pro_id: 16,
@@ -188,7 +218,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 17,
@@ -199,7 +231,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 18,
@@ -210,7 +244,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 1
         },
         {
             pro_id: 19,
@@ -221,7 +257,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 2
         },
         {
             pro_id: 20,
@@ -232,7 +270,9 @@ db.once('open', async () => {
             imageUrl: "../products_images/cpu/2200G-500x500-1.jpg",
             description: "description for Product 3",
             features: ["Feature 1", "Feature 2"],
-            inStock: true
+            inStock: true,
+            latest: Date.now(),
+            popularity: 3
         }
     ];
 

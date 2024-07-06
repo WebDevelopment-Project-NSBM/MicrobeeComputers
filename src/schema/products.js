@@ -9,7 +9,10 @@ const prodcutsSchema = new Schema({
     imageUrl: { type: String, required: false },
     description: { type: String, required: true },
     features: { type: Array, required: false },
-    inStock: { type: Boolean, required: true, default: false }
+    inStock: { type: Boolean, required: true, default: false },
+    latest: { type: Date, required: true },
+    popularity: { type: Number, required: true, default: 1 }
+
 });
 
 const Products = model('products', prodcutsSchema);
