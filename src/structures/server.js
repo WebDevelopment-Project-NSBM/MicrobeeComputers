@@ -4,9 +4,9 @@ const cors = require('cors');
 const app = express();
 const path = require('path');
 const data = require('../product_data/cpu/data.json');
-const config = require('../../config.json')
-const { CartItems } = require('../schema/cartItems')
-const { Users } = require('../schema/users')
+const config = require('../../config.json');
+const { CartItems } = require('../schema/cartItems');
+const { Users } = require('../schema/users');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -115,13 +115,13 @@ app.post('/api/login', async (req, res) => {
     try {
         const user = await Users.findOne({ email, password });
         if (user) {
-            res.status(200).send('Login successful');
+            res.status(200).json({ success: true, userId: user._id });
         } else {
-            res.status(401).send('Invalid email or password');
+            res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
     } catch (err) {
         console.error('Error during login:', err);
-        res.status(500).send('Error during login');
+        res.status(500).json({ success: false, message: 'Error during login' });
     }
 });
 
@@ -141,6 +141,26 @@ app.post('/api/register', async (req, res) => {
         console.error('Error during registration:', err);
         res.status(500).send('Error during registration');
     }
+});
+
+app.get('/api/user/profile', async (req, res) => {
+    const userId = req.query.userId;
+
+    try {
+        const user = await Users.findById(userId);
+        if (user) {
+            res.status(200).json(user);
+        } else {
+            res.status(404).send('User not found');
+        }
+    } catch (err) {
+        console.error('Error fetching user profile:', err);
+        res.status(500).send('Error fetching user profile');
+    }
+});
+app.post('/api/logout', (req, res) => {
+    // No specific server-side session cleanup needed, just respond to the client
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 
 const PORT = 3000;

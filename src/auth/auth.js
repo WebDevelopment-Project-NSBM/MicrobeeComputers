@@ -33,11 +33,14 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ email, password }),
         })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     showSuccessMessage('Login successful');
-                } else if (response.status === 401) {
-                    showErrorMessage('Invalid email or password');
+                    localStorage.setItem('userId', data.userId);
+                    window.location.href = '../user/user-profile.html';
+                } else if (data.message) {
+                    showErrorMessage(data.message);
                 } else {
                     throw new Error('Login failed');
                 }

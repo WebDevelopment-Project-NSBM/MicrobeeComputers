@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="user-profile.js"></script>
+</head>
+
+<body>
+    <header class="bg-light py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="logo">
+                <img src="logo.png" alt="Computer Shop">
+            </div>
+            <div class="contact">
+                <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
+            </div>
+            <div class="auth d-flex align-items-center">
+                <a href="../auth/auth.html?modal=login" class="btn btn-primary mr-2">Log In</a>
+                <a href="../auth/auth.html?modal=register" class="btn btn-secondary mr-2">Register</a>
+                <a href="../cart/cart.html" class="btn btn-danger mr-2">Cart</a>
+                <button id="logoutButton" class="btn btn-warning mr-2">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <h2>User Profile</h2>
+        <div id="userProfileContainer" class="mt-4">
+            <!-- User Profile Information -->
+        </div>
+    </div>
+</body>
+
+</html>
