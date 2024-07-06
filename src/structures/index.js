@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sortByElement = document.getElementById('sortBy');
 
     function fetchProducts() {
-        fetch('http://localhost:3000/api/products')
+        fetch(`${config.hosturl}/api/products`)
             .then(response => response.json())
             .then(data => {
                 sortedProducts = data;
@@ -127,7 +127,7 @@ window.addToCart = function (productId, productName, productCategory, productPri
         quantity: 1
     };
 
-    fetch('http://localhost:3000/api/cart/add', {
+    fetch(`${config.hosturl}/api/cart/add`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    fetch('http://localhost:3000/api/login', {
+    fetch(`${config.hosturl}/api/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -185,7 +185,7 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
 
-    fetch('http://localhost:3000/api/register', {
+    fetch(`${config.hosturl}/api/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

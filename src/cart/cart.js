@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const paginationContainer = document.getElementById('paginationContainer');
 
     function fetchCartItems() {
-        fetch('http://localhost:3000/api/cart/items')
+        fetch(`${config.hosturl}/api/cart/items`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchCartItems();
 
     window.removeFromCart = function (productId) {
-        fetch(`http://localhost:3000/api/cart/remove/${productId}`, {
+        fetch(`${config.hosturl}/api/cart/remove/${productId}`, {
             method: 'DELETE',
         })
             .then(response => {
@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.increaseQuantity = function (productId) {
-        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
+        fetch(`${config.hosturl}/api/cart/update/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.decreaseQuantity = function (productId) {
-        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
+        fetch(`${config.hosturl}/api/cart/update/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

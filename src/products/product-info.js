@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function fetchProducts() {
-    return fetch('http://localhost:3000/api/products')
+    return fetch(`${config.hosturl}/api/products`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -70,7 +70,7 @@ window.addToCart = function (productId, productName, productCategory, productPri
         quantity: 1
     };
 
-    fetch('http://localhost:3000/api/cart/add', {
+    fetch(`${config.hosturl}/api/cart/add`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
