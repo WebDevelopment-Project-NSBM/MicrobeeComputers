@@ -1,7 +1,7 @@
 {
   "name": "nsbm-website",
   "version": "1.0.0",
-  "main": "src/Structure/server.js",
+  "main": "src/structures/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,9 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "i": "^0.3.7",
+    "mongoose": "^6.12.6",
+    "npm": "^10.8.1"
   }
 }

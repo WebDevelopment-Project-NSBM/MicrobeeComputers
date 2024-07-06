@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="card-body">
                             <h5 class="card-title" onclick="redirectToProductPage(${product.id})">${product.name}</h5>
                             <p class="card-text">Rs: ${product.price.toLocaleString()} <del>Rs: ${product.originalPrice.toLocaleString()}</del></p>
-                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.id})">Add to cart</a>
+                            <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
                         </div>
                     </div>
                 </div>
@@ -84,6 +84,29 @@ function redirectToProductPage(productId) {
     window.location.href = `../products/product-info.html?id=${productId}`;
 }
 
-window.addToCart = function (productId) {
-    console.log(`Product ${productId} added to cart`);
+window.addToCart = function (productId, productName, productPrice, productImageUrl) {
+    const cartItem = {
+        id: productId,
+        name: productName,
+        price: productPrice,
+        imageUrl: productImageUrl,
+        quantity: 1
+    };
+
+    fetch('http://localhost:3000/api/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItem),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log(`Product ${productId} added to cart`);
+        })
+        .catch(error => {
+            console.error('Error adding product to cart:', error);
+        });
 };

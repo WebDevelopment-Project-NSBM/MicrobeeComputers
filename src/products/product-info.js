@@ -48,13 +48,36 @@ function renderProductDetails(product) {
             <ul>
                 ${product.features.map(feature => `<li>${feature}</li>`).join('')}
             </ul>
-            <a href="#" class="btn btn-primary" onclick="addToCart(${product.id})">Add to cart</a>
+            <a href="#" class="btn btn-primary" onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.imageUrl}')">Add to cart</a>
         </div>
     `;
 
     productDetailsContainer.innerHTML = productHTML;
 }
 
-window.addToCart = function (productId) {
-    console.log(`Product ${productId} added to cart`);
+window.addToCart = function (productId, productName, productPrice, productImageUrl) {
+    const cartItem = {
+        id: productId,
+        name: productName,
+        price: productPrice,
+        imageUrl: productImageUrl,
+        quantity: 1
+    };
+
+    fetch('http://localhost:3000/api/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItem),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log(`Product ${productId} added to cart`);
+        })
+        .catch(error => {
+            console.error('Error adding product to cart:', error);
+        });
 };
