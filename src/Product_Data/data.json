@@ -1,0 +1,282 @@
+[
+    {
+        "id": 1,
+        "name": "GIGABYTE H410 MOTHERBOARD1",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 2,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 3,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 4,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 5,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 6,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 7,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 8,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 9,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 10,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 11,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 12,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 13,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 14,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 15,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 16,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 17,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 18,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 19,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    },
+    {
+        "id": 20,
+        "name": "GIGABYTE H410 MOTHERBOARD2",
+        "price": 27500,
+        "originalPrice": 30000,
+        "imageUrl": "../Product_Images/Cpu/5600G-500x500-1.png",
+        "description": "Add product description",
+        "features": [
+            "Feature X",
+            "Feature Y",
+            "Feature Z"
+        ],
+        "outOfStock": false
+    }
+]
