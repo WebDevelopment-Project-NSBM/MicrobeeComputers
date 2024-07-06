@@ -4,7 +4,7 @@ This is the item list of web assignment
 # DO NOT SHARE CONFIG.JSON FILE TO ANYONE!!!
 
 # To run this
-##You need to have node.js installed on your computer
+## You need to have node.js installed on your computer
 To download it https://nodejs.org/en/download/package-manager/current
 
 ## And you need Visual Studio Code as well
