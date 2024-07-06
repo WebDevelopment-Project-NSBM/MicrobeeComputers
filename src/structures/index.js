@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 function redirectToProductPage(productId) {
-    window.location.href = `../Products/product-info.html?id=${productId}`;
+    window.location.href = `../products/product-info.html?id=${productId}`;
 }
 
 window.addToCart = function (productId) {
