@@ -5,8 +5,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const cartItemsContainer = document.getElementById('cartItems');
     const paginationContainer = document.getElementById('paginationContainer');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const content = document.getElementById('content');
 
     function fetchCartItems() {
+        loadingSpinner.classList.add('active');
         fetch(`http://localhost:3000/api/cart/items`)
             .then(response => {
                 if (!response.ok) {
@@ -22,6 +25,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error('Error fetching cart items:', error);
                 cartItemsContainer.innerHTML = '<p>Error fetching cart items.</p>';
+            })
+            .finally(() => {
+                loadingSpinner.classList.remove('active');
+                content.style.display = 'block';
             });
     }
 

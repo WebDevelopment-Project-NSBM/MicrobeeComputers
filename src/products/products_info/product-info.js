@@ -1,6 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const productId = parseInt(urlParams.get('pro_id'));
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const productDetailsContainer = document.getElementById('productDetails');
+
+    function showLoading() {
+        loadingSpinner.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingSpinner.classList.remove('active');
+    }
+
+    showLoading();
 
     fetchProducts()
         .then(products => {
@@ -8,14 +20,15 @@ document.addEventListener("DOMContentLoaded", function () {
             if (product) {
                 renderProductDetails(product);
             } else {
-                const productDetailsContainer = document.getElementById('productDetails');
                 productDetailsContainer.innerHTML = '<p>Product not found.</p>';
             }
         })
         .catch(error => {
             console.error('Error fetching products:', error);
-            const productDetailsContainer = document.getElementById('productDetails');
             productDetailsContainer.innerHTML = '<p>Error fetching product details.</p>';
+        })
+        .finally(() => {
+            hideLoading();
         });
 });
 

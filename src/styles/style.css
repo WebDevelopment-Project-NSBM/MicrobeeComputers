@@ -1,0 +1,27 @@
+/* styles.css */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeOut 0.1s forwards;
+}
+
+.loading-spinner.active {
+    display: flex;
+    animation: fadeIn 0.1s forwards;
+}
+
+#content {
+    display: none;
+}
+
+#content.show {
+    display: block;
+}

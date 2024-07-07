@@ -8,8 +8,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const paginationContainer = document.getElementById('paginationContainer');
     const productCountElement = document.getElementById('productCount');
     const sortByElement = document.getElementById('sortBy');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const content = document.getElementById('content');
+
+    function showLoading() {
+        loadingSpinner.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingSpinner.classList.remove('active');
+        content.classList.add('show');
+    }
 
     function fetchProducts(category, sortBy = 'latest') {
+        showLoading();
         fetch(`http://localhost:3000/api/products?category=${category}&sortBy=${sortBy}`)
             .then(response => response.json())
             .then(data => {
@@ -20,6 +32,9 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .catch(error => {
                 console.error('Error fetching products:', error);
+            })
+            .finally(() => {
+                hideLoading();
             });
     }
 

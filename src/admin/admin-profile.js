@@ -20,13 +20,25 @@ document.addEventListener("DOMContentLoaded", function () {
     const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
     const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
     const userId = localStorage.getItem('userId');
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    const content = document.getElementById('content');
 
     if (!userId) {
         window.location.href = '../auth/auth.html?modal=login';
         return;
     }
 
+    function showLoading() {
+        loadingSpinner.classList.add('active');
+    }
+
+    function hideLoading() {
+        loadingSpinner.classList.remove('active');
+        content.classList.add('show');
+    }
+
     function fetchAdminProfile() {
+        showLoading();
         fetch(`http://localhost:3000/api/user/profile?userId=${userId}`, {
             method: 'GET',
             headers: {
@@ -35,15 +47,25 @@ document.addEventListener("DOMContentLoaded", function () {
         })
             .then(response => response.json())
             .then(data => {
+                hideLoading();
                 if (data.email && data.admin) {
                     renderAdminProfile(data);
                     fetchAllUsers();
                     fetchAllProducts();
                 } else {
-                    adminProfileContainer.innerHTML = '<p>You do not have admin rights.</p>';
+                    document.body.innerHTML = `
+                        <div class="container mt-5 text-center">
+                            <p>You do not have enough permissions to view this page.</p>
+                            <button id="redirectToHome" class="btn btn-primary">Go to Home</button>
+                        </div>
+                    `;
+                    document.getElementById('redirectToHome').addEventListener('click', () => {
+                        window.location.href = '../structures/home.html';
+                    });
                 }
             })
             .catch(error => {
+                hideLoading();
                 console.error('Error fetching admin profile:', error);
                 adminProfileContainer.innerHTML = '<p>Error fetching admin profile.</p>';
             });

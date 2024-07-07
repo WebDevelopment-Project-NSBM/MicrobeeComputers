@@ -4,11 +4,14 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+const cookieParser = require('cookie-parser');
 
 const config = require('../../config.json');
 const { CartItems } = require('../schema/cartItems');
 const { Users } = require('../schema/users');
 const { Products } = require('../schema/products');
+const { Session } = require('../schema/sessions');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -25,12 +28,35 @@ db.once('open', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
-// Configure multer to use disk storage
+app.use(async (req, res, next) => {
+    let sessionId = req.cookies.sessionId;
+
+    if (!sessionId) {
+        sessionId = uuidv4();
+        res.cookie('sessionId', sessionId, { maxAge: 3600 * 1000, httpOnly: true });
+        await Session.create({ sessionId, data: {} });
+    }
+
+    req.sessionId = sessionId;
+    req.session = await Session.findOne({ sessionId });
+
+    if (!req.session) {
+        req.session = await Session.create({ sessionId, data: {} });
+    }
+
+    next();
+});
+
+const saveSession = async (req) => {
+    await Session.updateOne({ sessionId: req.sessionId }, { data: req.session.data });
+};
+
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const category = req.body.category;
-        const uploadPath = `src/products_images/${category}`;
+        const uploadPath = path.join(__dirname, `../products_images/${category}`);
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
@@ -89,7 +115,6 @@ app.get('/api/products/highest-pro-id', async (req, res) => {
     }
 });
 
-// Upload image and add a new product
 app.post('/api/products/add', upload.single('image'), async (req, res) => {
     const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
 
@@ -149,7 +174,7 @@ app.put('/api/products/edit/:id', upload.single('image'), async (req, res) => {
     try {
         let imageUrl = '';
         if (req.file) {
-            imageUrl = `src/products_images/${category}/${req.file.filename}`;
+            imageUrl = `../products_images/${category}/${req.file.filename}`;
         }
 
         const updateFields = {
@@ -274,6 +299,8 @@ app.post('/api/login', async (req, res) => {
     try {
         const user = await Users.findOne({ email, password });
         if (user) {
+            req.session.data.set('userId', user._id.toString());
+            await saveSession(req);
             res.status(200).json({ success: true, userId: user._id });
         } else {
             res.status(401).json({ success: false, message: 'Invalid email or password' });
@@ -303,7 +330,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.get('/api/user/profile', async (req, res) => {
-    const userId = req.query.userId;
+    const userId = req.query.userId || req.session.data.get('userId');
 
     try {
         const user = await Users.findById(userId);
@@ -361,8 +388,15 @@ app.put('/api/user/edit/:userId', async (req, res) => {
     }
 });
 
-app.post('/api/logout', (req, res) => {
-    res.status(200).json({ success: true, message: 'Logged out successfully' });
+app.post('/api/logout', async (req, res) => {
+    try {
+        await Session.deleteOne({ sessionId: req.sessionId });
+        res.clearCookie('sessionId');
+        res.status(200).json({ success: true, message: 'Logged out successfully' });
+    } catch (err) {
+        console.error('Error during logout:', err);
+        res.status(500).json({ success: false, message: 'Error during logout' });
+    }
 });
 
 const PORT = 3000;
