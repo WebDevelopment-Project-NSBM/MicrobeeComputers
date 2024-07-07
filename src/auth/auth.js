@@ -36,18 +36,21 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    showSuccessMessage('Login successful');
                     localStorage.setItem('userId', data.userId);
-                    window.location.href = '../user/user-profile.html';
-                } else if (data.message) {
-                    showErrorMessage(data.message);
+                    console.log('Login success:', data); // Debugging line
+                    if (data.admin) {
+                        window.location.href = '../admin/admin-profile.html';
+                    } else {
+                        window.location.href = '../user/user-profile.html';
+                    }
                 } else {
-                    throw new Error('Login failed');
+                    console.error('Login failed:', data.message);
+                    alert('Login failed: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error during login:', error);
-                showErrorMessage('Login failed due to an error');
+                alert('Error during login. Please try again later.');
             });
     });
 
@@ -77,4 +80,22 @@ document.addEventListener("DOMContentLoaded", function () {
                 showErrorMessage('Registration failed due to an error');
             });
     });
+    const userId = localStorage.getItem('userId');
+    const logoutButton = document.createElement('a');
+    logoutButton.href = '#';
+    logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
+    logoutButton.id = 'logoutButton';
+    logoutButton.textContent = 'Logout';
+    logoutButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        localStorage.removeItem('userId');
+        window.location.href = '../auth/auth.html?modal=login';
+    });
+
+    if (userId) {
+        document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
+            button.style.display = 'none';
+        });
+        document.querySelector('.auth').appendChild(logoutButton);
+    }
 });

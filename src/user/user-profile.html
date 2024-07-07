@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
+    <link rel="stylesheet" href="../styles/style.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
@@ -22,13 +23,22 @@
                 <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
             </div>
             <div class="auth d-flex align-items-center">
+                <a href="../structures/home.html" class="btn btn-primary mr-2">Home</a>
                 <a href="../auth/auth.html?modal=login" class="btn btn-primary mr-2">Log In</a>
                 <a href="../auth/auth.html?modal=register" class="btn btn-secondary mr-2">Register</a>
                 <a href="../cart/cart.html" class="btn btn-danger mr-2">Cart</a>
+                <a href="../user/user-profile.html" class="btn btn-primary mr-2">Profile</a>
+                <a href="../admin/admin-profile.html" class="btn btn-primary mr-2">Admin Profile</a>
                 <button id="logoutButton" class="btn btn-warning mr-2">Logout</button>
             </div>
         </div>
     </header>
+
+    <div class="loading-spinner active">
+        <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
 
     <div class="container mt-5">
         <h2>User Profile</h2>

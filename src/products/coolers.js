@@ -110,6 +110,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const sortBy = sortByElement.value;
         fetchProducts('ram', sortBy);
     });
+
+    const userId = localStorage.getItem('userId');
+    const logoutButton = document.createElement('a');
+    logoutButton.href = '#';
+    logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
+    logoutButton.id = 'logoutButton';
+    logoutButton.textContent = 'Logout';
+    logoutButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        localStorage.removeItem('userId');
+        window.location.href = '../auth/auth.html?modal=login';
+    });
+
+    if (userId) {
+        document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
+            button.style.display = 'none';
+        });
+        document.querySelector('.auth').appendChild(logoutButton);
+    }
 });
 
 function redirectToProductPage(productId) {

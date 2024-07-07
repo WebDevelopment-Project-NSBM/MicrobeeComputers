@@ -434,6 +434,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchAdminProfile();
 
+    logoutButton.href = '#';
+    logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
+    logoutButton.id = 'logoutButton';
+    logoutButton.textContent = 'Logout';
+    logoutButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        localStorage.removeItem('userId');
+        window.location.href = '../auth/auth.html?modal=login';
+    });
+
+    if (userId) {
+        document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
+            button.style.display = 'none';
+        });
+        document.querySelector('.auth').appendChild(logoutButton);
+    }
+
     window.deleteUser = deleteUser;
     window.deleteProduct = deleteProduct;
     window.editProduct = editProduct;

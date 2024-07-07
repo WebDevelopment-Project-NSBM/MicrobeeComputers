@@ -284,7 +284,7 @@ app.post('/api/login', async (req, res) => {
         const user = await Users.findOne({ email, password });
         if (user) {
             req.session.userId = user._id.toString();
-            res.status(200).json({ success: true, userId: user._id });
+            res.status(200).json({ success: true, userId: user._id, admin: user.admin });
         } else {
             res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
