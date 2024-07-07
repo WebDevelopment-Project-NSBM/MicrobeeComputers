@@ -4,7 +4,6 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-const { Client, Server, UploadFilesCommand } = require('nextcloud-node-client');
 
 const config = require('../../config.json');
 const { CartItems } = require('../schema/cartItems');
@@ -27,16 +26,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const server = new Server({
-    basicAuth: {
-        password: config.nextcloudPassword,
-        username: config.nextcloudUsername,
+// Configure multer to use disk storage
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const category = req.body.category;
+        const uploadPath = `src/products_images/${category}`;
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
     },
-    url: config.nextcloudUrl,
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
 });
-const client = new Client(server);
-
-const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 app.get('/api/products', async (req, res) => {
@@ -86,6 +89,7 @@ app.get('/api/products/highest-pro-id', async (req, res) => {
     }
 });
 
+// Upload image and add a new product
 app.post('/api/products/add', upload.single('image'), async (req, res) => {
     const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
 
@@ -104,10 +108,7 @@ app.post('/api/products/add', upload.single('image'), async (req, res) => {
 
         let imageUrl = '';
         if (req.file) {
-            const fileName = path.parse(req.file.originalname).name;
-            const fileExt = path.parse(req.file.originalname).ext;
-            const remoteFilePath = `/uploads/${fileName}${fileExt}`;
-            imageUrl = await uploadToNextcloud(req.file.buffer, remoteFilePath, req.file.originalname);
+            imageUrl = `../products_images/${category}/${req.file.filename}`;
         }
 
         const newProduct = new Products({
@@ -148,10 +149,7 @@ app.put('/api/products/edit/:id', upload.single('image'), async (req, res) => {
     try {
         let imageUrl = '';
         if (req.file) {
-            const fileName = path.parse(req.file.originalname).name;
-            const fileExt = path.parse(req.file.originalname).ext;
-            const remoteFilePath = `/uploads/${fileName}${fileExt}`;
-            imageUrl = await uploadToNextcloud(req.file.buffer, remoteFilePath, req.file.originalname);
+            imageUrl = `src/products_images/${category}/${req.file.filename}`;
         }
 
         const updateFields = {
@@ -189,42 +187,6 @@ app.delete('/api/products/delete/:id', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error deleting product' });
     }
 });
-
-async function uploadToNextcloud(fileBuffer, remoteFilePath, fileName) {
-    try {
-        console.log('Uploading to Nextcloud:', remoteFilePath);
-
-        const tempFilePath = path.join(__dirname, 'tmp', fileName);
-        if (!fs.existsSync(path.join(__dirname, 'tmp'))) {
-            fs.mkdirSync(path.join(__dirname, 'tmp'));
-        }
-        fs.writeFileSync(tempFilePath, fileBuffer);
-
-        const files = [
-            {
-                sourceFileName: tempFilePath,
-                targetFileName: remoteFilePath
-            },
-        ];
-
-        const uc = new UploadFilesCommand(client, { files });
-        await uc.execute();
-
-        console.log(`File uploaded to Nextcloud: ${remoteFilePath}`);
-
-        const file = await client.getFile(remoteFilePath);
-        const createShare = { fileSystemElement: file };
-        const share = await client.createShare(createShare);
-        const streamlink = share.url + "/download/" + fileName;
-
-        fs.unlinkSync(tempFilePath);
-
-        return streamlink;
-    } catch (error) {
-        console.error(`Error uploading to Nextcloud: ${error}`);
-        throw error;
-    }
-}
 
 app.post('/api/cart/add', async (req, res) => {
     const { pro_id, name, category, price, imageUrl, quantity } = req.body;
