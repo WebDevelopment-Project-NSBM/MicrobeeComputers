@@ -1,4 +1,3 @@
-const config = require('../../config.json')
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     const modal = urlParams.get('modal');
@@ -27,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
 
-        fetch(`${config.hosturl}/api/login`, {
+        fetch(`http://localhost:3000/api/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -57,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
 
-        fetch(`${config.hosturl}/api/register`, {
+        fetch(`http://localhost:3000/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

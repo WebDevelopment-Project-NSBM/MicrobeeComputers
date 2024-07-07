@@ -1,4 +1,6 @@
 {
     "mongodbURL": "mongodb://web:nswebuser41@37.27.10.221:27017/web",
-    "hosturl": "http://37.27.10.221:3000"
+    "nextcloudUrl": "https://nx55389.your-storageshare.de",
+    "nextcloudUsername": "Admin",
+    "nextcloudPassword": "psEPtLA97drTmtd"
 }

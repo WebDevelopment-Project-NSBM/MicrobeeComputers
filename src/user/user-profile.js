@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchUserProfile() {
-        fetch(`${config.hosturl}/api/user/profile?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/user/profile?userId=${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function handleLogout() {
-        fetch(`${config.hosturl}/api/logout`, {
+        fetch(`http://localhost:3000/api/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

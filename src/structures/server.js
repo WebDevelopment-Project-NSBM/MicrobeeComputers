@@ -2,6 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
+const { Client, Server, UploadFilesCommand } = require('nextcloud-node-client');
+
 const config = require('../../config.json');
 const { CartItems } = require('../schema/cartItems');
 const { Users } = require('../schema/users');
@@ -22,7 +26,18 @@ db.once('open', () => {
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+
+const server = new Server({
+    basicAuth: {
+        password: config.nextcloudPassword,
+        username: config.nextcloudUsername,
+    },
+    url: config.nextcloudUrl,
+});
+const client = new Client(server);
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 app.get('/api/products', async (req, res) => {
     try {
@@ -33,6 +48,99 @@ app.get('/api/products', async (req, res) => {
         res.status(500).send('Error fetching products');
     }
 });
+
+app.get('/api/products/highest-pro-id', async (req, res) => {
+    try {
+        const lastProduct = await Products.findOne().sort({ pro_id: -1 });
+        const highestProId = lastProduct ? lastProduct.pro_id : 0;
+        res.status(200).json({ highestProId });
+    } catch (err) {
+        console.error('Error fetching highest pro_id:', err);
+        res.status(500).send('Error fetching highest pro_id');
+    }
+});
+
+app.post('/api/products/add', upload.single('image'), async (req, res) => {
+    const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
+
+    const allowedCategories = ['cpu', 'motherboards', 'ram', 'gpu', 'storage', 'monitor', 'casing', 'powersupply', 'coolers', 'ups'];
+    if (!allowedCategories.includes(category.toLowerCase())) {
+        return res.status(400).json({ success: false, message: 'Invalid category' });
+    }
+
+    if (![1, 2, 3].includes(parseInt(popularity))) {
+        return res.status(400).json({ success: false, message: 'Invalid popularity' });
+    }
+
+    try {
+        const lastProduct = await Products.findOne().sort({ pro_id: -1 });
+        const pro_id = lastProduct ? lastProduct.pro_id + 1 : 1;
+
+        let imageUrl = '';
+        if (req.file) {
+            const fileName = path.parse(req.file.originalname).name;
+            const fileExt = path.parse(req.file.originalname).ext;
+            const remoteFilePath = `/uploads/${fileName}${fileExt}`;
+            imageUrl = await uploadToNextcloud(req.file.buffer, remoteFilePath, req.file.originalname);
+        }
+
+        const newProduct = new Products({
+            pro_id,
+            name,
+            price,
+            discountRate,
+            category,
+            imageUrl,
+            description,
+            features: features.split(',').map(feature => feature.trim()),
+            inStock: inStock === 'on',
+            latest,
+            popularity: parseInt(popularity)
+        });
+
+        await newProduct.save();
+        res.status(201).json({ success: true, message: 'Product added successfully' });
+    } catch (err) {
+        console.error('Error adding product:', err);
+        res.status(500).json({ success: false, message: 'Error adding product' });
+    }
+});
+
+async function uploadToNextcloud(fileBuffer, remoteFilePath, fileName) {
+    try {
+        console.log('Uploading to Nextcloud:', remoteFilePath);
+
+        const tempFilePath = path.join(__dirname, 'tmp', fileName);
+        if (!fs.existsSync(path.join(__dirname, 'tmp'))) {
+            fs.mkdirSync(path.join(__dirname, 'tmp'));
+        }
+        fs.writeFileSync(tempFilePath, fileBuffer);
+
+        const files = [
+            {
+                sourceFileName: tempFilePath,
+                targetFileName: remoteFilePath
+            },
+        ];
+
+        const uc = new UploadFilesCommand(client, { files });
+        await uc.execute();
+
+        console.log(`File uploaded to Nextcloud: ${remoteFilePath}`);
+
+        const file = await client.getFile(remoteFilePath);
+        const createShare = { fileSystemElement: file };
+        const share = await client.createShare(createShare);
+        const streamlink = share.url + "/download/" + fileName;
+
+        fs.unlinkSync(tempFilePath);
+
+        return streamlink;
+    } catch (error) {
+        console.error(`Error uploading to Nextcloud: ${error}`);
+        throw error;
+    }
+}
 
 app.post('/api/cart/add', async (req, res) => {
     const { pro_id, name, category, price, imageUrl, quantity } = req.body;
@@ -161,6 +269,28 @@ app.get('/api/user/profile', async (req, res) => {
     } catch (err) {
         console.error('Error fetching user profile:', err);
         res.status(500).send('Error fetching user profile');
+    }
+});
+
+app.delete('/api/user/delete/:userId', async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        await Users.findByIdAndDelete(userId);
+        res.status(200).send('User deleted successfully');
+    } catch (err) {
+        console.error('Error deleting user:', err);
+        res.status(500).send('Error deleting user');
+    }
+});
+
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await Users.find();
+        res.status(200).json(users);
+    } catch (err) {
+        console.error('Error fetching users:', err);
+        res.status(500).send('Error fetching users');
     }
 });
 
