@@ -5,9 +5,9 @@ This repository contains NSBM University 23.2 Group Web Assignment Webpage
 
 ## Links
 
-[Node.js](https://nodejs.org/en/download/prebuilt-installer/current)
-[Visual Studio Code](https://code.visualstudio.com/)
-[Git](https://git-scm.com/download/win)
+- [Node.js](https://nodejs.org/en/download/prebuilt-installer/current)
+- [Visual Studio Code](https://code.visualstudio.com/)
+- [Git](https://git-scm.com/download/win)
 
 ## Installation
 - Download Node.js Perbuild installer V20.15.0 and install it.
