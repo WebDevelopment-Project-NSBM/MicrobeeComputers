@@ -40,8 +40,34 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 app.get('/api/products', async (req, res) => {
+    const { category, sortBy } = req.query;
+
+    let filter = {};
+    if (category) {
+        filter.category = category;
+    }
+
+    let sort = {};
+    switch (sortBy) {
+        case 'popularity':
+            sort.popularity = -1;
+            break;
+        case 'latest':
+            sort.latest = -1;
+            break;
+        case 'priceLowToHigh':
+            sort.price = 1;
+            break;
+        case 'priceHighToLow':
+            sort.price = -1;
+            break;
+        default:
+            sort = {};
+            break;
+    }
+
     try {
-        const products = await Products.find();
+        const products = await Products.find(filter).sort(sort);
         res.status(200).json(products);
     } catch (err) {
         console.error('Error fetching products:', err);

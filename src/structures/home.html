@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Categories</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .category-item {
+            margin-bottom: 20px;
+        }
+
+        .container-center {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="home.js"></script>
+</head>
+
+<body>
+    <header class="bg-light py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="logo">
+                <img src="logo.png" alt="Computer Shop">
+            </div>
+            <div class="contact">
+                <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
+            </div>
+            <div class="auth d-flex align-items-center">
+                <a href="auth/auth.html?modal=login" class="btn btn-primary mr-2">Log In</a>
+                <a href="auth/auth.html?modal=register" class="btn btn-secondary mr-2">Register</a>
+                <a href="cart/cart.html" class="btn btn-danger mr-2">Cart</a>
+                <a href="user/user-profile.html" class="btn btn-primary mr-2">Profile</a>
+                <a href="admin/admin-profile.html" class="btn btn-primary mr-2">Admin Profile</a>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-dark text-white py-2">
+        <div class="container">
+            <a href="#" class="text-white">Home</a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row" id="categoryContainer">
+            <!-- Categories will be inserted here -->
+        </div>
+    </div>
+</body>
+
+</html>
