@@ -106,6 +106,64 @@ app.post('/api/products/add', upload.single('image'), async (req, res) => {
     }
 });
 
+app.put('/api/products/edit/:id', upload.single('image'), async (req, res) => {
+    const { id } = req.params;
+    const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
+
+    const allowedCategories = ['cpu', 'motherboards', 'ram', 'gpu', 'storage', 'monitor', 'casing', 'powersupply', 'coolers', 'ups'];
+    if (!allowedCategories.includes(category.toLowerCase())) {
+        return res.status(400).json({ success: false, message: 'Invalid category' });
+    }
+
+    if (![1, 2, 3].includes(parseInt(popularity))) {
+        return res.status(400).json({ success: false, message: 'Invalid popularity' });
+    }
+
+    try {
+        let imageUrl = '';
+        if (req.file) {
+            const fileName = path.parse(req.file.originalname).name;
+            const fileExt = path.parse(req.file.originalname).ext;
+            const remoteFilePath = `/uploads/${fileName}${fileExt}`;
+            imageUrl = await uploadToNextcloud(req.file.buffer, remoteFilePath, req.file.originalname);
+        }
+
+        const updateFields = {
+            name,
+            price,
+            discountRate,
+            category,
+            description,
+            features: features.split(',').map(feature => feature.trim()),
+            inStock: inStock === 'on',
+            latest,
+            popularity: parseInt(popularity)
+        };
+
+        if (imageUrl) {
+            updateFields.imageUrl = imageUrl;
+        }
+
+        const updatedProduct = await Products.findByIdAndUpdate(id, updateFields, { new: true });
+        res.status(200).json({ success: true, message: 'Product updated successfully', product: updatedProduct });
+    } catch (err) {
+        console.error('Error updating product:', err);
+        res.status(500).json({ success: false, message: 'Error updating product' });
+    }
+});
+
+app.delete('/api/products/delete/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await Products.findByIdAndDelete(id);
+        res.status(200).json({ success: true, message: 'Product deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting product:', err);
+        res.status(500).json({ success: false, message: 'Error deleting product' });
+    }
+});
+
 async function uploadToNextcloud(fileBuffer, remoteFilePath, fileName) {
     try {
         console.log('Uploading to Nextcloud:', remoteFilePath);
@@ -239,20 +297,20 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/register', async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password, admin } = req.body;
 
     try {
         const existingUser = await Users.findOne({ email });
         if (existingUser) {
-            res.status(400).send('User already exists');
+            res.status(400).json({ success: false, message: 'User already exists' });
         } else {
-            const newUser = new Users({ email, password });
+            const newUser = new Users({ email, password, admin });
             await newUser.save();
-            res.status(201).send('User registered successfully');
+            res.status(201).json({ success: true, message: 'User registered successfully' });
         }
     } catch (err) {
         console.error('Error during registration:', err);
-        res.status(500).send('Error during registration');
+        res.status(500).json({ success: false, message: 'Error during registration' });
     }
 });
 
@@ -291,6 +349,27 @@ app.get('/api/users', async (req, res) => {
     } catch (err) {
         console.error('Error fetching users:', err);
         res.status(500).send('Error fetching users');
+    }
+});
+
+app.put('/api/user/edit/:userId', async (req, res) => {
+    const userId = req.params.userId;
+    const { email, admin } = req.body;
+
+    try {
+        const user = await Users.findByIdAndUpdate(
+            userId,
+            { email, admin },
+            { new: true, runValidators: true }
+        );
+        if (user) {
+            res.status(200).json({ success: true, message: 'User updated successfully' });
+        } else {
+            res.status(404).json({ success: false, message: 'User not found' });
+        }
+    } catch (err) {
+        console.error('Error updating user:', err);
+        res.status(500).json({ success: false, message: 'Error updating user' });
     }
 });
 
