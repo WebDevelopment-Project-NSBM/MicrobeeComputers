@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const content = document.getElementById('content');
 
     if (!userId) {
-        window.location.href = '../auth/auth.html?modal=login';
+        window.location.href = '../auth/auth.html?login';
         return;
     }
 
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     localStorage.removeItem('userId');
-                    window.location.href = '../auth/auth.html?modal=login';
+                    window.location.href = '../auth/auth.html?login';
                 } else {
                     console.error('Error logging out:', data.message);
                 }
@@ -441,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButton.addEventListener('click', function (event) {
         event.preventDefault();
         localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?modal=login';
+        window.location.href = '../auth/auth.html?login';
     });
 
     if (userId) {

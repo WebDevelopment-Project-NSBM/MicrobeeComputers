@@ -1,11 +1,13 @@
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
-    const modal = urlParams.get('modal');
+    const tab = urlParams.has('login') ? 'login' : urlParams.has('register') ? 'register' : null;
 
-    if (modal === 'login') {
-        $('#loginModal').modal('show');
-    } else if (modal === 'register') {
-        $('#registerModal').modal('show');
+    if (tab) {
+        $(`#${tab}-tab`).tab('show');
+        $(`#${tab}`).addClass('show active');
+    } else {
+        $('#login-tab').tab('show');
+        $('#login').addClass('show active');
     }
 
     function showSuccessMessage(message) {
@@ -37,19 +39,16 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     localStorage.setItem('userId', data.userId);
-                    console.log('Login success:', data); // Debugging line
                     if (data.admin) {
                         window.location.href = '../admin/admin-profile.html';
                     } else {
                         window.location.href = '../user/user-profile.html';
                     }
                 } else {
-                    console.error('Login failed:', data.message);
                     alert('Login failed: ' + data.message);
                 }
             })
             .catch(error => {
-                console.error('Error during login:', error);
                 alert('Error during login. Please try again later.');
             });
     });
@@ -76,10 +75,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             })
             .catch(error => {
-                console.error('Error during registration:', error);
                 showErrorMessage('Registration failed due to an error');
             });
     });
+
     const userId = localStorage.getItem('userId');
     const logoutButton = document.createElement('a');
     logoutButton.href = '#';
@@ -89,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButton.addEventListener('click', function (event) {
         event.preventDefault();
         localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?modal=login';
+        window.location.href = '../auth/auth.html?login';
     });
 
     if (userId) {

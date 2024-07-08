@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButton.addEventListener('click', function (event) {
         event.preventDefault();
         localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?modal=login';
+        window.location.href = '../auth/auth.html?login';
     });
 
     if (userId) {
