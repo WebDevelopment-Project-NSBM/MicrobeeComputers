@@ -16,10 +16,11 @@ This repository contains NSBM University 23.2 Group Web Assignment Webpage
 
 ## Run the Website
 - Go to desktop create folder.
-- Open Command Promnt and type this and press enter.
+- Open Visual Studio Code and follow this steps `Files > Open Folder > Select the Project folder > Select Folder`.
+- Open the Visual Studio Code Terminal `View > Terminal` after type below command in terminal and press enter.
 - `git clone https://github.com/WebDevelopment-Project-NSBM/NSBM-Website-item-list.git`
-- After this command run type this.
 - `npm install` and press enter.
 - `node .` to start the API Server.
-- To open the website go to `src/structures/home.html` open this.
+- Type the above commands to start the API server
+- To open the website go to `src/structures/home.html` open this file.
 
