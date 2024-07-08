@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     sortByElement.addEventListener('change', function () {
         const sortBy = sortByElement.value;
-        fetchProducts('ram', sortBy);
+        fetchProducts('motherboards', sortBy);
     });
 
     const userId = localStorage.getItem('userId');
