@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const itemsPerPage = 12;
+    const itemsPerPage = 15;
     let currentPage = 1;
     let sortedProducts = [];
     let originalProducts = [];
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const productContainer = document.getElementById('productContainer');
     const paginationContainer = document.getElementById('paginationContainer');
     const productCountElement = document.getElementById('productCount');
-    const sortByElement = document.getElementById('sortBy');
+    const sortByElement = document.querySelectorAll('.dropdown-content a');
     const loadingSpinner = document.querySelector('.loading-spinner');
     const content = document.getElementById('content');
 
@@ -54,11 +54,13 @@ document.addEventListener("DOMContentLoaded", function () {
             const originalPrice = product.price + (product.discountRate / 100 * product.price);
             const discountPrice = product.price;
             const productHTML = `
-                <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-item">
-                    <div class="card">
-                        <img src="${product.imageUrl}" class="card-img-top" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})">
+                <div class="w-full p-2 product-item">
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="product-image-container">
+                            <figure><img src="${product.imageUrl}" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})"></figure>
+                        </div>
                         <div class="card-body">
-                            <h5 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h5>
+                            <h2 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h2>
                             <p class="card-text">Rs: ${discountPrice.toLocaleString()} <del>Rs: ${originalPrice.toLocaleString()}</del></p>
                             <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.pro_id}, '${product.name}', '${product.category}', ${discountPrice}, '${product.imageUrl}')">Add to cart</a>
                         </div>
@@ -68,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
             productContainer.insertAdjacentHTML('beforeend', productHTML);
         });
 
+        resizeImages();
         renderPagination(products.length, page);
     }
 
@@ -106,9 +109,11 @@ document.addEventListener("DOMContentLoaded", function () {
         renderProducts(sortedProducts, currentPage);
     }
 
-    sortByElement.addEventListener('change', function () {
-        const sortBy = sortByElement.value;
-        fetchProducts('ups', sortBy);
+    sortByElement.forEach(item => {
+        item.addEventListener('click', function () {
+            const sortBy = this.dataset.sort;
+            fetchProducts('ups', sortBy);
+        });
     });
 
     const userId = localStorage.getItem('userId');
@@ -128,6 +133,19 @@ document.addEventListener("DOMContentLoaded", function () {
             button.style.display = 'none';
         });
         document.querySelector('.auth').appendChild(logoutButton);
+    }
+
+    function resizeImages() {
+        const images = document.querySelectorAll('.product-image-container img');
+        images.forEach(img => {
+            img.onload = function () {
+                if (img.naturalWidth !== 253 || img.naturalHeight !== 253) {
+                    img.style.width = '253px';
+                    img.style.height = '253px';
+                    img.style.objectFit = 'cover';
+                }
+            }
+        });
     }
 });
 
@@ -162,63 +180,3 @@ window.addToCart = function (productId, productName, productCategory, productPri
             console.error('Error adding product to cart:', error);
         });
 };
-
-document.querySelector('.btn-primary.mr-2').addEventListener('click', function (event) {
-    event.preventDefault();
-    $('#loginModal').modal('show');
-});
-
-document.querySelector('.btn-secondary.mr-2').addEventListener('click', function (event) {
-    event.preventDefault();
-    $('#registerModal').modal('show');
-});
-
-document.getElementById('loginForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-
-    fetch(`http://localhost:3000/api/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log('Login successful');
-                $('#loginModal').modal('hide');
-            } else {
-                throw new Error('Login failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error during login:', error);
-        });
-});
-
-document.getElementById('registerForm').addEventListener('submit', function (event) {
-    event.preventDefault();
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-
-    fetch(`http://localhost:3000/api/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log('Registration successful');
-                $('#registerModal').modal('hide');
-            } else {
-                throw new Error('Registration failed');
-            }
-        })
-        .catch(error => {
-            console.error('Error during registration:', error);
-        });
-});

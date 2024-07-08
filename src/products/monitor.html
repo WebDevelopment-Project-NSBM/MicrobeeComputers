@@ -4,79 +4,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Listing</title>
-    <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .product-item {
-            margin-bottom: 20px;
-        }
-
-        .container-center {
-            display: flex;
-            justify-content: center;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>monitor Listing</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@1.14.0/dist/full.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="products.css" rel="stylesheet">
     <script src="monitor.js"></script>
 </head>
 
 <body>
-    <header class="bg-light py-3">
-        <div class="container d-flex justify-content-between align-items-center">
+    <header class="bg-gray-100 py-3">
+        <div class="container mx-auto flex flex-wrap justify-between items-center">
             <div class="logo">
                 <img src="logo.png" alt="Computer Shop">
             </div>
             <div class="contact">
                 <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
             </div>
-            <div class="auth d-flex align-items-center">
-                <a href="../structures/home.html" class="btn btn-primary mr-2">Home</a>
-                <a href="../auth/auth.html?login" class="btn btn-primary mr-2">Log In</a>
-                <a href="../auth/auth.html?register" class="btn btn-secondary mr-2">Register</a>
-                <a href="../cart/cart.html" class="btn btn-danger mr-2">Cart</a>
-                <a href="../user/user-profile.html" class="btn btn-primary mr-2">Profile</a>
-                <a href="../admin/admin-profile.html" class="btn btn-primary mr-2">Admin Profile</a>
+            <div class="auth flex items-center">
+                <a href="../structures/home.html" class="btn btn-outline btn-warning mr-2">Home</a>
+                <a href="../auth/auth.html?login" class="btn btn-outline btn-warning mr-2">Log In</a>
+                <a href="../auth/auth.html?register" class="btn btn-outline btn-warning mr-2">Register</a>
+                <a href="../cart/cart.html" class="btn btn-outline btn-warning mr-2">Cart</a>
+                <a href="../user/user-profile.html" class="btn btn-outline btn-warning mr-2">Profile</a>
+                <a href="../admin/admin-profile.html" class="btn btn-outline btn-warning mr-2">Admin Profile</a>
             </div>
         </div>
     </header>
 
-    <nav class="bg-dark text-white py-2">
-        <div class="container">
+    <nav class="bg-gray-800 text-white py-2">
+        <div class="container mx-auto">
             <a href="#" class="text-white">Home</a> / <a href="#" class="text-white">Shop</a> / <a href="#"
-                class="text-white">Motherboards</a> / <span>Brand New Motherboards</span>
+                class="text-white">monitors</a> / <span class="text-black">Brand New monitors</span>
         </div>
     </nav>
 
     <div class="loading-spinner active">
-        <div class="spinner-border text-primary" role="status">
-            <span class="sr-only">Loading...</span>
-        </div>
+        <span
+            class="loading loading-spinner-icon loading-md daisyui-icon daisyui-loading daisyui-loading-spinner"></span>
     </div>
 
-    <div class="container mt-5">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <p id="productCount"></p>
-            </div>
-            <div class="col-md-6 text-right">
-                <select id="sortBy" class="form-control d-inline-block w-auto">
-                    <option value="latest">Sort by latest</option>
-                    <option value="popularity">Sort by popularity</option>
-                    <option value="priceLowToHigh">Price: low to high</option>
-                    <option value="priceHighToLow">Price: high to low</option>
-                </select>
+    <div id="content" class="container mx-auto mt-5 main-content">
+        <div class="flex flex-wrap justify-between mb-3">
+            <p id="productCount" class="text-black"></p>
+            <div class="dropdown dropdown-hover">
+                <div tabindex="0" role="button" class="btn sort-button m-1">Sort by</div>
+                <ul tabindex="0" class="dropdown-content menu z-[1] w-52 p-2 shadow">
+                    <li><a href="#" data-sort="latest">Sort by latest</a></li>
+                    <li><a href="#" data-sort="popularity">Sort by popularity</a></li>
+                    <li><a href="#" data-sort="priceLowToHigh">Price: low to high</a></li>
+                    <li><a href="#" data-sort="priceHighToLow">Price: high to low</a></li>
+                </ul>
             </div>
         </div>
         <div class="container-center">
-            <div class="row justify-content-center" id="productContainer">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                id="productContainer">
                 <!-- Products will be inserted here -->
             </div>
         </div>
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center" id="paginationContainer">
+        <nav aria-label="Page navigation" class="pagination-container">
+            <ul class="pagination" id="paginationContainer">
                 <!-- Page navigation for each button -->
             </ul>
         </nav>
