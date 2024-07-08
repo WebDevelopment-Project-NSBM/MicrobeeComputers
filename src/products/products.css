@@ -165,3 +165,8 @@ nav span {
 img {
     color: #000000;
 }
+
+.logo-img {
+    width: 125px;
+    height: auto;
+}
