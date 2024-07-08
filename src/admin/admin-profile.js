@@ -22,6 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const userId = localStorage.getItem('userId');
     const loadingSpinner = document.querySelector('.loading-spinner');
     const content = document.getElementById('content');
+    const adminTabs = document.getElementById('adminTabs');
+    const adminTabsContent = document.getElementById('adminTabsContent');
 
     if (!userId) {
         window.location.href = '../auth/auth.html?login';
@@ -53,7 +55,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     fetchAllUsers();
                     fetchAllProducts();
                 } else {
-                    document.body.innerHTML = `
+                    adminTabs.style.display = 'none';
+                    adminTabsContent.innerHTML = `
                         <div class="container mt-5 text-center">
                             <p>You do not have enough permissions to view this page.</p>
                             <button id="redirectToHome" class="btn btn-primary">Go to Home</button>
@@ -305,6 +308,26 @@ document.addEventListener("DOMContentLoaded", function () {
     async function handleAddProduct(event) {
         event.preventDefault();
 
+        const requestingUserId = localStorage.getItem('userId');
+        const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            if (!response.ok) {
+                alert('User not found');
+                return;
+                // throw new Error('User not found');
+            }
+            return response.json();
+        });
+
+        if (!requestingUser.admin) {
+            alert('Only admin users can register new users');
+            return;
+        }
+
         const newProId = await fetch('http://localhost:3000/api/products/highest-pro-id')
             .then(response => response.json())
             .then(data => data.highestProId + 1)
@@ -362,30 +385,52 @@ document.addEventListener("DOMContentLoaded", function () {
     async function handleAddUser(event) {
         event.preventDefault();
 
-        const formData = new FormData(document.getElementById('addUserForm'));
-        const user = {
-            email: formData.get('email'),
-            password: formData.get('password'),
-            admin: formData.get('admin') === 'on'
-        };
+        try {
+            const requestingUserId = localStorage.getItem('userId');
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('User not found');
+                }
+                return response.json();
+            });
 
-        const response = await fetch('http://localhost:3000/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user)
-        });
+            if (!requestingUser.admin) {
+                alert('Only admin users can register new users');
+                return;
+            }
 
-        const result = await response.json();
+            const formData = new FormData(document.getElementById('addUserForm'));
+            const user = {
+                email: formData.get('email'),
+                password: formData.get('password'),
+                admin: formData.get('admin') === 'on'
+            };
 
-        if (response.ok) {
-            alert('User added successfully!');
-            document.getElementById('addUserForm').reset();
-            addUserModal.hide();
-            fetchAllUsers();
-        } else {
-            alert('Error adding user: ' + result.message);
+            const response = await fetch('http://localhost:3000/api/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('User added successfully!');
+                document.getElementById('addUserForm').reset();
+                addUserModal.hide();
+                fetchAllUsers();
+            } else {
+                alert('Error adding user: ' + result.message);
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
         }
     }
 
@@ -434,6 +479,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchAdminProfile();
 
+    window.deleteUser = deleteUser;
+    window.deleteProduct = deleteProduct;
+    window.editProduct = editProduct;
+    window.editUser = editUser;
+
     logoutButton.href = '#';
     logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
     logoutButton.id = 'logoutButton';
@@ -450,9 +500,4 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         document.querySelector('.auth').appendChild(logoutButton);
     }
-
-    window.deleteUser = deleteUser;
-    window.deleteProduct = deleteProduct;
-    window.editProduct = editProduct;
-    window.editUser = editUser;
 });

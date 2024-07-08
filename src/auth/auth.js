@@ -15,7 +15,15 @@ document.addEventListener("DOMContentLoaded", function () {
         $('#successModal').modal('show');
         setTimeout(() => {
             $('#successModal').modal('hide');
-            window.location.href = '../structures/index.html';
+            window.location.href = '../structures/home.html';
+        }, 2000);
+    }
+
+    function showSuccessMessageLogin(message, redirectUrl) {
+        document.getElementById('successMessage').textContent = message;
+        $('#successModal').modal('show');
+        setTimeout(() => {
+            window.location.href = redirectUrl;
         }, 2000);
     }
 
@@ -40,16 +48,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (data.success) {
                     localStorage.setItem('userId', data.userId);
                     if (data.admin) {
-                        window.location.href = '../admin/admin-profile.html';
+                        showSuccessMessageLogin('Login successful, Redirecting to Admin Profile', '../admin/admin-profile.html');
                     } else {
-                        window.location.href = '../user/user-profile.html';
+                        showSuccessMessageLogin('Login successful, Redirecting to User Profile', '../user/user-profile.html');
                     }
                 } else {
-                    alert('Login failed: ' + data.message);
+                    showErrorMessage('Registration failed due to an error' + data.message);
                 }
             })
             .catch(error => {
-                alert('Error during login. Please try again later.');
+                alert('Error during login. Please try again later.' + error);
             });
     });
 
@@ -65,17 +73,18 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ email, password }),
         })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
                     showSuccessMessage('Registration successful');
-                } else if (response.status === 400) {
+                } else if (data.message === 'User already exists') {
                     showErrorMessage('Account already exists');
                 } else {
-                    throw new Error('Registration failed');
+                    showErrorMessage('Registration failed: ' + data.message);
                 }
             })
             .catch(error => {
-                showErrorMessage('Registration failed due to an error');
+                showErrorMessage('Registration failed due to an error' + error);
             });
     });
 

@@ -277,11 +277,43 @@ app.put('/api/cart/update/:pro_id', async (req, res) => {
     }
 });
 
+app.post('/api/register', async (req, res) => {
+    const { email, password, admin } = req.body;
+    const requestingUserId = req.session.userId;
+
+    if (email.length >= 80 || password.length >= 40) {
+        return res.status(400).json({ success: false, message: 'Email or password exceeds character limit' });
+    }
+
+    try {
+        // const requestingUser = await Users.findById(requestingUserId);
+        // if (!requestingUser || !requestingUser.admin) {
+        //     return res.status(403).json({ success: false, message: 'Only admin users can register new users' });
+        // }
+
+        const existingUser = await Users.findOne({ email: email.toLowerCase() });
+        if (existingUser) {
+            return res.status(400).json({ success: false, message: 'User already exists' });
+        } else {
+            const newUser = new Users({ email: email.toLowerCase(), password, admin });
+            await newUser.save();
+            res.status(201).json({ success: true, message: 'User registered successfully' });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'Error during registration' });
+    }
+});
+
+
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
+    if (email.length >= 80 || password.length >= 40) {
+        return res.status(400).json({ success: false, message: 'Email or password exceeds character limit' });
+    }
+
     try {
-        const user = await Users.findOne({ email, password });
+        const user = await Users.findOne({ email: email.toLowerCase(), password });
         if (user) {
             req.session.userId = user._id.toString();
             res.status(200).json({ success: true, userId: user._id, admin: user.admin });
@@ -289,28 +321,10 @@ app.post('/api/login', async (req, res) => {
             res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
     } catch (err) {
-        console.error('Error during login:', err);
         res.status(500).json({ success: false, message: 'Error during login' });
     }
 });
 
-app.post('/api/register', async (req, res) => {
-    const { email, password, admin } = req.body;
-
-    try {
-        const existingUser = await Users.findOne({ email });
-        if (existingUser) {
-            res.status(400).json({ success: false, message: 'User already exists' });
-        } else {
-            const newUser = new Users({ email, password, admin });
-            await newUser.save();
-            res.status(201).json({ success: true, message: 'User registered successfully' });
-        }
-    } catch (err) {
-        console.error('Error during registration:', err);
-        res.status(500).json({ success: false, message: 'Error during registration' });
-    }
-});
 
 app.get('/api/user/profile', async (req, res) => {
     const userId = req.query.userId || req.session.userId;

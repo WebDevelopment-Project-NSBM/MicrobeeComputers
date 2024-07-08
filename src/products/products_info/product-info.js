@@ -73,7 +73,7 @@ function renderProductDetails(product) {
 
     const productHTML = `
         <div class="col-md-6">
-            <img src="${product.imageUrl}" class="img-fluid" alt="${product.name}">
+            <img src="../${product.imageUrl}" class="img-fluid" alt="${product.name}">
         </div>
         <div class="col-md-6">
             <h2>${product.name}</h2>
