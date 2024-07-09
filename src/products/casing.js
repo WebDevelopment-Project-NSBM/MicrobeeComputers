@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const sortByElement = document.querySelectorAll('.dropdown-content a');
     const loadingBar = document.getElementById('loadingBar');
     const content = document.getElementById('content');
+    const cartAlert = document.getElementById('cartAlert');
 
     function showLoading() {
         loadingBar.style.width = '100%';
@@ -205,36 +206,46 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
+
+    function showCartAlert() {
+        cartAlert.classList.remove('hidden');
+        cartAlert.classList.add('show');
+        setTimeout(() => {
+            cartAlert.classList.remove('show');
+            cartAlert.classList.add('hidden');
+        }, 2000);
+    }
+
+    window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
+        const cartItem = {
+            pro_id: productId,
+            name: productName,
+            category: productCategory,
+            price: productPrice,
+            imageUrl: productImageUrl,
+            quantity: 1
+        };
+
+        fetch(`http://localhost:3000/api/cart/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cartItem),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log(`Product ${productId} added to cart`);
+                showCartAlert();
+            })
+            .catch(error => {
+                console.error('Error adding product to cart:', error);
+            });
+    };
 });
 
 function redirectToProductPage(productId) {
     window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
 }
-
-window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
-    const cartItem = {
-        pro_id: productId,
-        name: productName,
-        category: productCategory,
-        price: productPrice,
-        imageUrl: productImageUrl,
-        quantity: 1
-    };
-
-    fetch(`http://localhost:3000/api/cart/add`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(cartItem),
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            console.log(`Product ${productId} added to cart`);
-        })
-        .catch(error => {
-            console.error('Error adding product to cart:', error);
-        });
-};
