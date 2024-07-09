@@ -8,15 +8,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const paginationContainer = document.getElementById('paginationContainer');
     const productCountElement = document.getElementById('productCount');
     const sortByElement = document.querySelectorAll('.dropdown-content a');
-    const loadingSpinner = document.querySelector('.loading-spinner');
+    const loadingBar = document.getElementById('loadingBar');
     const content = document.getElementById('content');
 
     function showLoading() {
-        loadingSpinner.classList.add('active');
+        loadingBar.style.width = '100%';
+        loadingBar.style.display = 'block';
     }
 
     function hideLoading() {
-        loadingSpinner.classList.remove('active');
+        loadingBar.style.width = '0';
         content.classList.add('show');
     }
 
@@ -56,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const productHTML = `
                 <div class="w-full p-2 product-item">
                     <div class="card bg-base-100 shadow-xl">
-                        <figure><img src="${product.imageUrl}" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})"></figure>
+                        <figure><img src="${product.imageUrl}" alt="${product.name}" class="object-cover w-full h-48" onclick="redirectToProductPage(${product.pro_id})"></figure>
                         <div class="card-body">
                             <h2 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h2>
                             <p class="card-text">Rs: ${discountPrice.toLocaleString()} <del>Rs: ${originalPrice.toLocaleString()}</del></p>
@@ -67,8 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
             productContainer.insertAdjacentHTML('beforeend', productHTML);
         });
-
         renderPagination(products.length, page);
+        attachButtonResetHandlers();
     }
 
     function renderPagination(totalItems, currentPage) {
@@ -114,22 +115,95 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const userId = localStorage.getItem('userId');
-    const logoutButton = document.createElement('a');
-    logoutButton.href = '#';
-    logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
-    logoutButton.id = 'logoutButton';
-    logoutButton.textContent = 'Logout';
-    logoutButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?login';
-    });
+
+    const loginButton = document.querySelector('.auth a[href*="login"]');
+    const registerButton = document.querySelector('.auth a[href*="register"]');
+    const userProfileDropdown = document.getElementById('user-profile-dropdown');
+    const adminProfileDropdown = document.getElementById('admin-profile-dropdown');
+    const logoutButton = document.getElementById('logoutButton');
+    const avatar = document.querySelector('.avatar.placeholder');
+
+    function handleLogout() {
+        fetch(`http://localhost:3000/api/logout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    localStorage.removeItem('userId');
+                    window.location.href = '../auth/auth.html?login';
+                } else {
+                    console.error('Error logging out:', data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error during logout:', error);
+            });
+    }
 
     if (userId) {
-        document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
-            button.style.display = 'none';
+        loginButton.style.display = 'none';
+        registerButton.style.display = 'none';
+
+        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                const { email, admin } = data;
+
+                if (email) {
+                    const firstLetter = email.charAt(0).toUpperCase();
+                    avatar.querySelector('span').textContent = firstLetter;
+                }
+
+                if (admin) {
+                    userProfileDropdown.style.display = 'block';
+                    adminProfileDropdown.style.display = 'block';
+                } else {
+                    userProfileDropdown.style.display = 'block';
+                    adminProfileDropdown.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
+
+        logoutButton.addEventListener('click', handleLogout);
+    } else {
+        avatar.style.display = 'none';
+    }
+
+    attachButtonResetHandlers();
+
+    function attachButtonResetHandlers() {
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.backgroundColor = '#A0A0A0';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseleave', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseover', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#A0A0A0';
+                    this.style.color = '#000000';
+                }
+            });
+            button.addEventListener('mouseout', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#FFCC48';
+                    this.style.color = '#000000';
+                }
+            });
         });
-        document.querySelector('.auth').appendChild(logoutButton);
     }
 });
 
