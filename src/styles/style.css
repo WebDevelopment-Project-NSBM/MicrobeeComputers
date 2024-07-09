@@ -6,6 +6,14 @@ body {
     color: #000000;
 }
 
+.avatar.placeholder .bg-neutral {
+    background-color: #FFCC48;
+}
+
+.avatar.placeholder .text-neutral-content {
+    color: #000000;
+}
+
 .search-bar {
     background-color: white;
     border: 2px solid #FFCC48;
@@ -150,9 +158,19 @@ body {
     background-color: #A0A0A0;
 }
 
-.btn-home {
-    background-color: gray;
-    border-color: gray;
+.btn-home,
+.btn-cart {
+    background-color: #FFCC48;
+    color: #000000;
+    border: none;
+}
+
+.btn-home:hover,
+.btn-home:focus,
+.btn-cart:hover,
+.btn-cart:focus {
+    background-color: #A0A0A0;
+    color: #000000;
 }
 
 .sort-button {
