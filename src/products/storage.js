@@ -56,9 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const productHTML = `
                 <div class="w-full p-2 product-item">
                     <div class="card bg-base-100 shadow-xl">
-                        <div class="product-image-container">
-                            <figure><img src="${product.imageUrl}" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})"></figure>
-                        </div>
+                        <figure><img src="${product.imageUrl}" alt="${product.name}" onclick="redirectToProductPage(${product.pro_id})"></figure>
                         <div class="card-body">
                             <h2 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h2>
                             <p class="card-text">Rs: ${discountPrice.toLocaleString()} <del>Rs: ${originalPrice.toLocaleString()}</del></p>
@@ -70,7 +68,6 @@ document.addEventListener("DOMContentLoaded", function () {
             productContainer.insertAdjacentHTML('beforeend', productHTML);
         });
 
-        resizeImages();
         renderPagination(products.length, page);
     }
 
@@ -133,19 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
             button.style.display = 'none';
         });
         document.querySelector('.auth').appendChild(logoutButton);
-    }
-
-    function resizeImages() {
-        const images = document.querySelectorAll('.product-image-container img');
-        images.forEach(img => {
-            img.onload = function () {
-                if (img.naturalWidth !== 253 || img.naturalHeight !== 253) {
-                    img.style.width = '253px';
-                    img.style.height = '253px';
-                    img.style.objectFit = 'cover';
-                }
-            }
-        });
     }
 });
 

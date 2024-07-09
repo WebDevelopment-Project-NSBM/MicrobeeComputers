@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const itemsPerPage = 9;
+    const itemsPerPage = 15;
     let currentPage = 1;
     let cartItems = [];
 
@@ -40,16 +40,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         paginatedItems.forEach(item => {
             const itemHTML = `
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <img src="${item.imageUrl}" class="card-img-top" alt="${item.name}">
+                <div class="w-full md:w-1/5 p-2">
+                    <div class="card bg-base-100 shadow-xl">
+                        <figure><img src="${item.imageUrl}" alt="${item.name}" class="object-cover w-full h-48"></figure>
                         <div class="card-body">
-                            <h5 class="card-title">${item.name}</h5>
-                            <p class="card-text">Price: Rs ${item.price.toLocaleString()}</p>
-                            <p class="card-text">Quantity: ${item.quantity}</p>
-                            <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.pro_id})">Remove</button>
-                            <button class="btn btn-primary btn-sm" onclick="increaseQuantity(${item.pro_id})">+</button>
-                            <button class="btn btn-primary btn-sm" onclick="decreaseQuantity(${item.pro_id})">-</button>
+                            <h2 class="card-title">${item.name}</h2>
+                            <p>Price: Rs ${item.price.toLocaleString()}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                            <div class="flex justify-between">
+                                <button class="btn btn-error btn-sm" onclick="removeFromCart(${item.pro_id})">Remove</button>
+                                <div class="flex">
+                                    <button class="btn btn-primary btn-sm mr-1" onclick="increaseQuantity(${item.pro_id})">+</button>
+                                    <button class="btn btn-primary btn-sm" onclick="decreaseQuantity(${item.pro_id})">-</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -58,8 +62,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         const checkoutButton = `
-            <div class="col-md-12 mt-3">
-                <button class="btn btn-success btn-block">Checkout</button>
+            <div class="w-full mt-4">
+                <button class="btn checkout-btn btn-block">Checkout</button>
             </div>
         `;
         cartItemsContainer.insertAdjacentHTML('beforeend', checkoutButton);
@@ -158,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error decreasing product quantity:', error);
             });
     };
+
     const userId = localStorage.getItem('userId');
     const logoutButton = document.createElement('a');
     logoutButton.href = '#';
