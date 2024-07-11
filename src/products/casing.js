@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadingBar = document.getElementById('loadingBar');
     const content = document.getElementById('content');
     const cartAlert = document.getElementById('cartAlert');
+    const logoutAlert = document.getElementById('logoutAlert');
 
     function showLoading() {
         loadingBar.style.width = '100%';
@@ -135,7 +136,10 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     localStorage.removeItem('userId');
-                    window.location.href = '../auth/auth.html?login';
+                    showLogoutAlert();
+                    setTimeout(() => {
+                        window.location.href = '../auth/auth.html?login';
+                    }, 3000);
                 } else {
                     console.error('Error logging out:', data.message);
                 }
@@ -143,6 +147,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error('Error during logout:', error);
             });
+    }
+
+    function showLogoutAlert() {
+        logoutAlert.classList.remove('hidden');
+        setTimeout(() => {
+            logoutAlert.classList.add('hidden');
+        }, 3000);
     }
 
     if (userId) {
@@ -244,6 +255,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error adding product to cart:', error);
             });
     };
+
+    const sortDropdown = document.getElementById('sortDropdown');
+    const dropdownMenu = sortDropdown.querySelector('.dropdown-content');
+
+    sortDropdown.addEventListener('mouseenter', function () {
+        const rect = dropdownMenu.getBoundingClientRect();
+        const windowWidth = window.innerWidth;
+
+        if (rect.right > windowWidth) {
+            dropdownMenu.classList.add('dropdown-right');
+        } else {
+            dropdownMenu.classList.remove('dropdown-right');
+        }
+    });
+
+    sortDropdown.addEventListener('mouseleave', function () {
+        dropdownMenu.classList.remove('dropdown-right');
+    });
 });
 
 function redirectToProductPage(productId) {
