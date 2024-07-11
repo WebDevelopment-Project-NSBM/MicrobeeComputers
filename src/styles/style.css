@@ -78,6 +78,29 @@ body {
     margin-bottom: 20px;
 }
 
+.product-item .card-title {
+    font-size: 1rem;
+    max-height: 3rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    line-clamp: 3;
+    box-orient: vertical;
+    white-space: normal;
+}
+
+.product-item .card-title.long {
+    font-size: 0.8rem;
+    max-height: 6rem;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
+    -webkit-box-orient: vertical;
+    box-orient: vertical;
+    white-space: normal;
+}
+
 .container-center {
     display: flex;
     justify-content: center;

@@ -56,12 +56,24 @@ document.addEventListener("DOMContentLoaded", function () {
         paginatedProducts.forEach(product => {
             const originalPrice = product.price + (product.discountRate / 100 * product.price);
             const discountPrice = product.price;
+            const isLongName = product.name.length > 25;
+            let displayName;
+            if (product.name.length > 75) {
+                displayName = `${product.name.substring(0, 25)}<br>${product.name.substring(25, 50)}<br>${product.name.substring(50, 75)}`;
+            } else if (product.name.length > 50) {
+                displayName = `${product.name.substring(0, 25)}<br>${product.name.substring(25, 50)}<br>${product.name.substring(50, 75)}`;
+            } else if (product.name.length > 25) {
+                displayName = `${product.name.substring(0, 25)}<br>${product.name.substring(25, 50)}`;
+            } else {
+                displayName = product.name;
+            }
+
             const productHTML = `
                 <div class="w-full p-2 product-item">
                     <div class="card bg-base-100 shadow-xl">
                         <figure><img src="${product.imageUrl}" alt="${product.name}" class="object-cover w-full h-48" onclick="redirectToProductPage(${product.pro_id})"></figure>
                         <div class="card-body">
-                            <h2 class="card-title" onclick="redirectToProductPage(${product.pro_id})">${product.name}</h2>
+                            <h2 class="card-title ${isLongName ? 'long' : ''}" onclick="redirectToProductPage(${product.pro_id})">${displayName}</h2>
                             <p class="card-text">Rs: ${discountPrice.toLocaleString()} <del>Rs: ${originalPrice.toLocaleString()}</del></p>
                             <a href="#" class="btn btn-primary btn-block" onclick="addToCart(${product.pro_id}, '${product.name}', '${product.category}', ${discountPrice}, '${product.imageUrl}')">Add to cart</a>
                         </div>
