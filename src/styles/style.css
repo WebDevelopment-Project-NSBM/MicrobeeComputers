@@ -43,6 +43,24 @@ body {
     border-color: #FFCC48;
 }
 
+.select,
+.textarea {
+    background-color: white;
+}
+
+.select,
+.textarea:focus {
+    border-color: #FFCC48;
+}
+
+.file-input {
+    background-color: #FFCC48;
+}
+
+.file-input:focus {
+    border-color: #FFCC48;
+}
+
 .quantity-input {
     width: 9%;
     height: 2.5rem;
