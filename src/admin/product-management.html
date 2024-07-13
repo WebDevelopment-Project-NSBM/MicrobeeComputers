@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Products</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="../styles/style.css" rel="stylesheet">
+    <script src="./product-management.js"></script>
+</head>
+
+<body>
+    <header class="bg-light py-3">
+        <div class="container d-flex justify-between items-center">
+            <div class="logo">
+                <img src="../logo/MicroBee Comupters.png" alt="Computer Shop">
+            </div>
+            <div class="contact">
+                <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
+            </div>
+            <div class="auth d-flex items-center">
+                <a href="../structures/home.html" class="btn btn-primary mr-2">Home</a>
+                <a href="../auth/login.html" class="btn btn-primary mr-2">Log In</a>
+                <a href="../auth/register.html" class="btn btn-secondary mr-2">Register</a>
+                <a href="../cart/cart.html" class="btn btn-danger mr-2">Cart</a>
+                <a href="../user/user-profile.html" class="btn btn-primary mr-2">Profile</a>
+                <a href="../admin/admin-profile.html" class="btn btn-primary mr-2">Admin Profile</a>
+                <button id="logoutButton" class="btn btn-warning mr-2">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div id="logoutAlert" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2">
+        Logout successful!
+    </div>
+
+    <div class="container mx-auto mt-5">
+        <h2 class="text-center text-3xl font-bold mb-6">Manage Products</h2>
+        <div class="flex justify-end mb-4">
+            <div>
+                <select id="productCategoryFilter" class="select select-bordered">
+                    <option value="">All Categories</option>
+                    <option value="cpu">CPU</option>
+                    <option value="motherboards">Motherboards</option>
+                    <option value="ram">RAM</option>
+                    <option value="gpu">GPU</option>
+                    <option value="storage">Storage</option>
+                    <option value="monitor">Monitor</option>
+                    <option value="casing">Casing</option>
+                    <option value="powersupply">Power Supply</option>
+                    <option value="coolers">Coolers</option>
+                    <option value="ups">UPS</option>
+                </select>
+            </div>
+        </div>
+        <div id="productListContainer" class="mt-4">
+            <!-- List of products will be inserted here -->
+        </div>
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-center" id="productPaginationContainer">
+                <!-- Pagination buttons will be inserted here -->
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Modal for editing product -->
+    <div id="editProductModal" class="modal">
+        <div class="modal-box">
+            <h3 class="font-bold text-lg">Edit Product</h3>
+            <form id="editProductForm" enctype="multipart/form-data">
+                <input type="hidden" id="editProductId" name="productId">
+                <div class="form-group">
+                    <label for="editName">Name</label>
+                    <input type="text" class="input input-bordered w-full" id="editName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPrice">Price</label>
+                    <input type="number" class="input input-bordered w-full" id="editPrice" name="price" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDiscountRate">Discount Rate</label>
+                    <input type="number" class="input input-bordered w-full" id="editDiscountRate" name="discountRate"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="editCategory">Category</label>
+                    <select class="select select-bordered w-full" id="editCategory" name="category" required>
+                        <option value="cpu">CPU</option>
+                        <option value="motherboards">Motherboards</option>
+                        <option value="ram">RAM</option>
+                        <option value="gpu">GPU</option>
+                        <option value="storage">Storage</option>
+                        <option value="monitor">Monitor</option>
+                        <option value="casing">Casing</option>
+                        <option value="powersupply">Power Supply</option>
+                        <option value="coolers">Coolers</option>
+                        <option value="ups">UPS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editImage">Image</label>
+                    <input type="file" class="input input-bordered w-full" id="editImage" name="image">
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">Description</label>
+                    <textarea class="textarea textarea-bordered w-full" id="editDescription" name="description"
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editFeatures">Features (comma separated)</label>
+                    <input type="text" class="input input-bordered w-full" id="editFeatures" name="features">
+                </div>
+                <div class="form-group">
+                    <label for="editInStock">In Stock</label>
+                    <input type="checkbox" class="checkbox" id="editInStock" name="inStock">
+                </div>
+                <div class="form-group">
+                    <label for="editLatest">Latest</label>
+                    <input type="date" class="input input-bordered w-full" id="editLatest" name="latest" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPopularity">Popularity</label>
+                    <select class="select select-bordered w-full" id="editPopularity" name="popularity" required>
+                        <option value="1">Low</option>
+                        <option value="2">Medium</option>
+                        <option value="3">High</option>
+                    </select>
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

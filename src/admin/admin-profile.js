@@ -16,9 +16,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const productPaginationContainer = document.getElementById('productPaginationContainer');
     const productListContainer = document.getElementById('productListContainer');
     const productCategoryFilter = document.getElementById('productCategoryFilter');
-    const editProductModal = new bootstrap.Modal(document.getElementById('editProductModal'));
-    const editUserModal = new bootstrap.Modal(document.getElementById('editUserModal'));
-    const addUserModal = new bootstrap.Modal(document.getElementById('addUserModal'));
+    const editProductModal = document.getElementById('editProductModal');
+    const editUserModal = document.getElementById('editUserModal');
+    const addUserModal = document.getElementById('addUserModal');
     const userId = localStorage.getItem('userId');
     const loadingSpinner = document.querySelector('.loading-spinner');
     const content = document.getElementById('content');
@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const adminTabsContent = document.getElementById('adminTabsContent');
 
     if (!userId) {
-        window.location.href = '../auth/auth.html?login';
+        window.location.href = '../auth/login.html';
         return;
     }
 
@@ -76,12 +76,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderAdminProfile(admin) {
         const adminHTML = `
-            <div class="card">
+            <div class="card bg-white shadow-lg p-10 mt-5 w-full max-w-md lg:max-w-lg mx-auto">
+                <h5 class="text-center text-3xl font-bold mb-6">${admin.email || 'Admin Profile'}</h5>
                 <div class="card-body">
-                    <h5 class="card-title">${admin.email || 'Admin Profile'}</h5>
-                    <p class="card-text"><strong>Email:</strong> ${admin.email}</p>
-                    <p class="card-text"><strong>Admin:</strong> ${admin.admin ? 'Yes' : 'No'}</p>
-                    <p class="card-text"><strong>Member since:</strong> ${new Date(admin.createdAt).toLocaleDateString()}</p>
+                    <p class="card-text mb-4"><strong>Email:</strong> ${admin.email}</p>
+                    <p class="card-text mb-4"><strong>Admin:</strong> ${admin.admin ? 'Yes' : 'No'}</p>
+                    <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(admin.createdAt).toLocaleDateString()}</p>
                 </div>
             </div>
         `;
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         paginatedUsers.forEach(user => {
             const userHTML = `
-                <div class="card mb-3">
+                <div class="card mb-3 bg-white shadow-lg p-5">
                     <div class="card-body">
                         <h5 class="card-title">${user.email}</h5>
                         <p class="card-text"><strong>Email:</strong> ${user.email}</p>
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         paginatedProducts.forEach(product => {
             const productHTML = `
-                <div class="card mb-3">
+                <div class="card mb-3 bg-white shadow-lg p-5">
                     <div class="card-body">
                         <h5 class="card-title">Product ID: ${product.pro_id}</h5>
                         <p class="card-text">${product.name}</p>
@@ -270,7 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('editLatest').value = product.latest.split('T')[0];
             document.getElementById('editPopularity').value = product.popularity;
 
-            editProductModal.show();
+            editProductModal.classList.add('modal-open');
         }
     }
 
@@ -280,7 +280,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById('editUserId').value = user._id;
             document.getElementById('editUserEmail').value = user.email;
             document.getElementById('editUserAdmin').checked = user.admin;
-            editUserModal.show();
+            editUserModal.classList.add('modal-open');
         }
     }
 
@@ -295,7 +295,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     localStorage.removeItem('userId');
-                    window.location.href = '../auth/auth.html?login';
+                    window.location.href = '../auth/login.html';
                 } else {
                     console.error('Error logging out:', data.message);
                 }
@@ -318,7 +318,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (!response.ok) {
                 alert('User not found');
                 return;
-                // throw new Error('User not found');
             }
             return response.json();
         });
@@ -375,7 +374,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (result.success) {
             alert('Product updated successfully!');
-            editProductModal.hide();
+            editProductModal.classList.remove('modal-open');
             fetchAllProducts(); // Refresh the product list
         } else {
             alert('Error updating product: ' + result.message);
@@ -424,7 +423,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (response.ok) {
                 alert('User added successfully!');
                 document.getElementById('addUserForm').reset();
-                addUserModal.hide();
+                addUserModal.classList.remove('modal-open');
                 fetchAllUsers();
             } else {
                 alert('Error adding user: ' + result.message);
@@ -456,7 +455,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (result.success) {
             alert('User updated successfully!');
-            editUserModal.hide();
+            editUserModal.classList.remove('modal-open');
             fetchAllUsers();
         } else {
             alert('Error updating user: ' + result.message);
@@ -484,20 +483,50 @@ document.addEventListener("DOMContentLoaded", function () {
     window.editProduct = editProduct;
     window.editUser = editUser;
 
-    logoutButton.href = '#';
-    logoutButton.classList.add('btn', 'btn-warning', 'mr-2');
-    logoutButton.id = 'logoutButton';
-    logoutButton.textContent = 'Logout';
-    logoutButton.addEventListener('click', function (event) {
-        event.preventDefault();
-        localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?login';
-    });
-
     if (userId) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
-        document.querySelector('.auth').appendChild(logoutButton);
+
+        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                const { email, admin } = data;
+                if (email) {
+                    const firstLetter = email.charAt(0).toUpperCase();
+                    document.querySelector('.avatar.placeholder span').textContent = firstLetter;
+                }
+
+                if (admin) {
+                    document.getElementById('user-profile-dropdown').style.display = 'block';
+                    document.getElementById('admin-profile-dropdown').style.display = 'block';
+                } else {
+                    document.getElementById('user-profile-dropdown').style.display = 'block';
+                    document.getElementById('admin-profile-dropdown').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
+
+        logoutButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            localStorage.removeItem('userId');
+            showLogoutMessage('Logout successful!');
+        });
+    } else {
+        document.querySelector('.avatar.placeholder').style.display = 'none';
+        document.getElementById('user-profile-dropdown').style.display = 'none';
+        document.getElementById('admin-profile-dropdown').style.display = 'none';
+    }
+
+    function showLogoutMessage(message) {
+        const logoutAlert = document.getElementById('logoutAlert');
+        logoutAlert.textContent = message;
+        logoutAlert.classList.remove('hidden');
+        setTimeout(() => {
+            logoutAlert.classList.add('hidden');
+            window.location.href = '../auth/login.html';
+        }, 1000);
     }
 });

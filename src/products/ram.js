@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     localStorage.removeItem('userId');
                     showLogoutAlert();
                     setTimeout(() => {
-                        window.location.href = '../auth/auth.html?login';
+                        window.location.href = '../auth/login.html';
                     }, 3000);
                 } else {
                     console.error('Error logging out:', data.message);

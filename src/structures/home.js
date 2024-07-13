@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButton.addEventListener('click', function (event) {
         event.preventDefault();
         localStorage.removeItem('userId');
-        window.location.href = '../auth/auth.html?login';
+        window.location.href = '../auth/login.html';
     });
 
     if (userId) {
