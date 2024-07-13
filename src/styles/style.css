@@ -246,6 +246,17 @@ body {
     background-color: #A0A0A0;
 }
 
+.btn-danger {
+    background-color: #ff5d48;
+    color: #000000;
+    border: none;
+}
+
+.btn-danger:hover,
+.btn-danger:focus {
+    background-color: #A0A0A0;
+}
+
 .btn-home,
 .btn-cart {
     background-color: #FFCC48;

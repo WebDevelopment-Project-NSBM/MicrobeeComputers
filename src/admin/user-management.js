@@ -3,11 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const logoutButton = document.getElementById('logoutButton');
     const userId = localStorage.getItem('userId');
     const loadingBar = document.getElementById('loadingBar');
-    const logoutAlert = document.getElementById('logoutAlert');
     const userListContainer = document.getElementById('userListContainer');
     const userPaginationContainer = document.getElementById('userPaginationContainer');
     const editUserModal = document.getElementById('editUserModal');
     const addUserModal = document.getElementById('addUserModal');
+    const adminContent = document.getElementById('adminContent');
     const itemsPerPageUser = 9;
     let currentPage = 1;
     let users = [];
@@ -34,11 +34,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function showLogoutMessage(message) {
-        logoutAlert.textContent = message;
-        logoutAlert.classList.remove('hidden');
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
         setTimeout(() => {
-            logoutAlert.classList.add('hidden');
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showAlert(message);
+        setTimeout(() => {
             window.location.href = '../auth/login.html';
         }, 1000);
     }
@@ -76,6 +86,16 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 hideLoadingBar();
                 if (data.email) {
+                    if (!data.admin) {
+                        showAlert('You are not an admin user');
+                        adminContent.innerHTML = `
+                            <div class="container mx-auto text-center mt-5">
+                                <h1 class="text-3xl font-bold mb-4">You are not an admin user</h1>
+                                <a href="../structures/home.html" class="btn btn-primary">Home</a>
+                            </div>
+                        `;
+                        return;
+                    }
                     renderUserProfile(data);
                 } else {
                     userProfileContainer.innerHTML = '<p>Error fetching user profile.</p>';
@@ -90,15 +110,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderUserProfile(user) {
         const userHTML = `
-        <div class="card bg-white shadow-lg p-10 mt-5 w-full max-w-md lg:max-w-lg mx-auto">
-            <h5 class="text-center text-3xl font-bold mb-6">${user.email || 'User Profile'}</h5>
-            <div class="card-body">
-                <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
-                <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
-                <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+            <div class="card mb-3 mx-auto max-w-md">
+                <div class="card-body">
+                    <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
+                    <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
+                    <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
+                    <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                </div>
             </div>
-        </div>
-    `;
+        `;
         userProfileContainer.innerHTML = userHTML;
     }
 
@@ -131,11 +151,11 @@ document.addEventListener("DOMContentLoaded", function () {
             const userHTML = `
                 <div class="card mb-3">
                     <div class="card-body">
-                        <h5 class="card-title">${user.email}</h5>
+                        <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
                         <p class="card-text"><strong>Email:</strong> ${user.email}</p>
                         <p class="card-text"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
                         <p class="card-text"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
-                        <button class="btn btn-warning" onclick="editUser('${user._id}')">Edit</button>
+                        <button class="btn btn-primary" onclick="editUser('${user._id}')">Edit</button>
                         <button class="btn btn-danger" onclick="deleteUser('${user._id}')">Delete</button>
                     </div>
                 </div>
@@ -181,33 +201,57 @@ document.addEventListener("DOMContentLoaded", function () {
         renderPagination(users.length, currentPage, 'user');
     }
 
-    function deleteUser(userId) {
-        fetch(`http://localhost:3000/api/user/delete/${userId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    console.log(`User ${userId} deleted successfully`);
-                    fetchAllUsers();
-                } else {
-                    throw new Error('Error deleting user');
+    async function deleteUser(userId) {
+        try {
+            const requestingUserId = localStorage.getItem('userId');
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-            })
-            .catch(error => {
-                console.error('Error deleting user:', error);
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('User not found');
+                }
+                return response.json();
             });
+
+            if (!requestingUser.admin) {
+                showAlert('Only admin users can delete users');
+                return;
+            }
+
+            const response = await fetch(`http://localhost:3000/api/user/delete/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            if (response.ok) {
+                showAlert(`User ${userId} deleted successfully`);
+                fetchAllUsers();
+            } else {
+                throw new Error('Error deleting user');
+            }
+        } catch (error) {
+            showAlert('Error: ' + error.message);
+            console.error('Error deleting user:', error);
+        }
     }
 
-    function editUser(userId) {
-        const user = users.find(user => user._id === userId);
-        if (user) {
-            document.getElementById('editUserId').value = user._id;
-            document.getElementById('editUserEmail').value = user.email;
-            document.getElementById('editUserAdmin').checked = user.admin;
-            editUserModal.classList.remove('hidden');
+    async function editUser(userId) {
+        try {
+            const user = users.find(user => user._id === userId);
+            if (user) {
+                document.getElementById('editUserId').value = user._id;
+                document.getElementById('editUserEmail').value = user.email;
+                document.getElementById('editUserAdmin').checked = user.admin;
+                editUserModal.showModal();
+            }
+        } catch (error) {
+            showAlert('Error: ' + error.message);
+            console.error('Error editing user:', error);
         }
     }
 
@@ -229,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             if (!requestingUser.admin) {
-                alert('Only admin users can register new users');
+                showAlert('Only admin users can register new users');
                 return;
             }
 
@@ -251,44 +295,66 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json();
 
             if (response.ok) {
-                alert('User added successfully!');
+                showAlert('User added successfully!');
                 document.getElementById('addUserForm').reset();
-                addUserModal.classList.add('hidden');
+                addUserModal.close();
                 fetchAllUsers();
             } else {
-                alert('Error adding user: ' + result.message);
+                showAlert('Error adding user: ' + result.message);
             }
         } catch (error) {
-            alert('Error: ' + error.message);
+            showAlert('Error: ' + error.message);
         }
     }
 
     async function handleEditUser(event) {
         event.preventDefault();
 
-        const formData = new FormData(document.getElementById('editUserForm'));
-        const userId = formData.get('userId');
-        const user = {
-            email: formData.get('email'),
-            admin: formData.get('admin') === 'on'
-        };
+        try {
+            const requestingUserId = localStorage.getItem('userId');
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            }).then(response => {
+                if (!response.ok) {
+                    throw new Error('User not found');
+                }
+                return response.json();
+            });
 
-        const response = await fetch(`http://localhost:3000/api/user/edit/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(user)
-        });
+            if (!requestingUser.admin) {
+                showAlert('Only admin users can edit users');
+                return;
+            }
 
-        const result = await response.json();
+            const formData = new FormData(document.getElementById('editUserForm'));
+            const userId = formData.get('userId');
+            const user = {
+                email: formData.get('email'),
+                admin: formData.get('admin') === 'on'
+            };
 
-        if (result.success) {
-            alert('User updated successfully!');
-            editUserModal.classList.add('hidden');
-            fetchAllUsers();
-        } else {
-            alert('Error updating user: ' + result.message);
+            const response = await fetch(`http://localhost:3000/api/user/edit/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(user)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                showAlert('User updated successfully!');
+                editUserModal.close();
+                fetchAllUsers();
+            } else {
+                showAlert('Error updating user: ' + result.message);
+            }
+        } catch (error) {
+            showAlert('Error: ' + error.message);
         }
     }
 
@@ -301,4 +367,110 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.deleteUser = deleteUser;
     window.editUser = editUser;
+
+    if (userId) {
+        document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
+            button.style.display = 'none';
+        });
+
+        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+            .then(response => response.json())
+            .then(data => {
+                const { email, admin } = data;
+                if (email) {
+                    const firstLetter = email.charAt(0).toUpperCase();
+                    document.querySelector('.avatar.placeholder span').textContent = firstLetter;
+                }
+
+                if (admin) {
+                    document.getElementById('user-profile-dropdown').style.display = 'block';
+                    document.getElementById('admin-profile-dropdown').style.display = 'block';
+
+                    const currentPath = window.location.pathname.split('/').pop();
+                    document.querySelectorAll('.auth a').forEach(button => {
+                        const href = button.getAttribute('href').split('/').pop();
+                        if (href === currentPath) {
+                            button.style.display = 'none';
+                        }
+                    });
+                } else {
+                    document.getElementById('user-profile-dropdown').style.display = 'block';
+                    document.getElementById('admin-profile-dropdown').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
+
+        logoutButton.addEventListener('click', function (event) {
+            event.preventDefault();
+            localStorage.removeItem('userId');
+            showLogoutMessage('Logout successful!');
+        });
+    } else {
+        document.querySelector('.avatar.placeholder').style.display = 'none';
+        document.getElementById('user-profile-dropdown').style.display = 'none';
+        document.getElementById('admin-profile-dropdown').style.display = 'none';
+    }
+
+    attachButtonPrimaryResetHandlers();
+    attachButtonDangerResetHandlers();
+
+    function attachButtonPrimaryResetHandlers() {
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.backgroundColor = '#A0A0A0';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseleave', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseover', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#A0A0A0';
+                    this.style.color = '#000000';
+                }
+            });
+            button.addEventListener('mouseout', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#FFCC48';
+                    this.style.color = '#000000';
+                }
+            });
+        });
+    }
+
+    function attachButtonDangerResetHandlers() {
+        document.querySelectorAll('.btn-danger').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.backgroundColor = '#A0A0A0';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.backgroundColor = '#ff5d48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseleave', function () {
+                this.style.backgroundColor = '#ff5d48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseover', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#A0A0A0';
+                    this.style.color = '#000000';
+                }
+            });
+            button.addEventListener('mouseout', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#ff5d48';
+                    this.style.color = '#000000';
+                }
+            });
+        });
+    }
 });

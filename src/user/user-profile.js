@@ -53,9 +53,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderUserProfile(user) {
         const userHTML = `
-            <div class="card bg-white shadow-lg p-10 mt-5 w-full max-w-md lg:max-w-lg mx-auto">
-                <h5 class="text-center text-3xl font-bold mb-6">${user.email || 'User Profile'}</h5>
+            <div class="card mb-3 mx-auto max-w-md">
                 <div class="card-body">
+                    <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
                     <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
                     <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
                     <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>

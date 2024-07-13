@@ -36,6 +36,9 @@
                 </div>
                 <div class="auth flex items-center space-x-2">
                     <a href="../structures/home.html" class="btn btn-home mr-2">Home</a>
+                    <a href="../admin/user-management.html" class="btn btn-home mr-2">Users</a>
+                    <a href="../admin/add-product.html" class="btn btn-home mr-2">Add-Products</a>
+                    <a href="../admin/product-management.html" class="btn btn-home mr-2">Products</a>
                     <a href="../auth/login.html" class="btn btn-home mr-2">
                         <i class="fas fa-sign-in-alt mr-1"></i> Log In
                     </a>
@@ -70,81 +73,85 @@
         Logout successful!
     </div>
 
-    <div class="container mx-auto mt-5">
-        <!-- User Profile Card -->
-        <div class="container mx-auto mt-5 flex justify-center">
-            <div class="w-full max-w-xl p-5">
-                <h2 class="text-center text-3xl font-bold mb-6">User Profile</h2>
-                <div id="userProfileContainer" class="bg-white p-10">
-                    <!-- User Profile Information -->
+    <div id="adminContent" class="container mx-auto mt-5">
+        <div class="container mx-auto mt-5">
+            <!-- User Profile Card -->
+            <div class="container mx-auto mt-5 flex justify-center">
+                <div class="w-full max-w-xl p-5">
+                    <h2 class="text-center text-3xl font-bold mb-6">User Profile</h2>
+                    <div id="userProfileContainer" class="bg-white p-10">
+                        <!-- User Profile Information -->
+                    </div>
                 </div>
             </div>
+
+            <h2 class="text-center text-3xl font-bold mb-6">User Management</h2>
+            <div class="flex justify-end mb-4">
+                <button class="btn btn-primary" onclick="document.getElementById('addUserModal').showModal()">Add New
+                    User</button>
+            </div>
+            <div id="userListContainer" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- List of users will be inserted here -->
+            </div>
+            <nav aria-label="Page navigation" class="mt-4 flex justify-center">
+                <ul class="pagination justify-center" id="userPaginationContainer">
+                    <!-- Pagination buttons will be inserted here -->
+                </ul>
+            </nav>
         </div>
 
-        <h2 class="text-center text-3xl font-bold mb-6">User Management</h2>
-        <div class="flex justify-end mb-4">
-            <button class="btn btn-primary" onclick="document.getElementById('addUserModal').showModal()">Add New
-                User</button>
-        </div>
-        <div id="userListContainer" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <!-- List of users will be inserted here -->
-        </div>
-        <nav aria-label="Page navigation" class="mt-4 flex justify-center">
-            <ul class="pagination justify-center" id="userPaginationContainer">
-                <!-- Pagination buttons will be inserted here -->
-            </ul>
-        </nav>
-    </div>
+        <!-- Modal for editing user -->
+        <dialog id="editUserModal" class="modal">
+            <div class="modal-box bg-white">
+                <h3 class="font-bold text-lg mb-4">Edit User</h3>
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" name="userId">
+                    <div class="form-group mb-4">
+                        <label for="editUserEmail" class="block">Email</label>
+                        <input type="email" class="input input-bordered w-full" id="editUserEmail" name="email"
+                            required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="editUserAdmin" class="block">Admin</label>
+                        <input type="checkbox" class="checkbox modal-box-checkbox-outline" id="editUserAdmin"
+                            name="admin">
+                    </div>
+                    <div class="modal-action">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-danger"
+                            onclick="document.getElementById('editUserModal').close()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
-    <!-- Modal for editing user -->
-    <dialog id="editUserModal" class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Edit User</h3>
-            <form id="editUserForm">
-                <input type="hidden" id="editUserId" name="userId">
-                <div class="form-group mb-4">
-                    <label for="editUserEmail">Email</label>
-                    <input type="email" class="input input-bordered w-full" id="editUserEmail" name="email" required>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="editUserAdmin">Admin</label>
-                    <input type="checkbox" class="checkbox" id="editUserAdmin" name="admin">
-                </div>
-                <div class="modal-action">
-                    <button type="submit" class="btn btn-primary">Save changes</button>
-                    <button type="button" class="btn btn-secondary"
-                        onclick="document.getElementById('editUserModal').close()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </dialog>
-
-    <!-- Modal for adding user -->
-    <dialog id="addUserModal" class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg mb-4">Add User</h3>
-            <form id="addUserForm">
-                <div class="form-group mb-4">
-                    <label for="addUserEmail" class="block">Email</label>
-                    <input type="email" class="input input-bordered w-full" id="addUserEmail" name="email" required>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="addUserPassword" class="block">Password</label>
-                    <input type="password" class="input input-bordered w-full" id="addUserPassword" name="password"
-                        required>
-                </div>
-                <div class="form-group mb-4">
-                    <label for="addUserAdmin" class="block">Admin</label>
-                    <input type="checkbox" class="checkbox modal-box-checkbox-outline" id="addUserAdmin" name="admin">
-                </div>
-                <div class="modal-action">
-                    <button type="submit" class="btn btn-primary">Add User</button>
-                    <button type="button" class="btn btn-primary"
-                        onclick="document.getElementById('addUserModal').close()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </dialog>
+        <!-- Modal for adding user -->
+        <dialog id="addUserModal" class="modal">
+            <div class="modal-box bg-white">
+                <h3 class="font-bold text-lg mb-4">Add User</h3>
+                <form id="addUserForm">
+                    <div class="form-group mb-4">
+                        <label for="addUserEmail" class="block">Email</label>
+                        <input type="email" class="input input-bordered w-full" id="addUserEmail" name="email" required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="addUserPassword" class="block">Password</label>
+                        <input type="password" class="input input-bordered w-full" id="addUserPassword" name="password"
+                            required>
+                    </div>
+                    <div class="form-group mb-4">
+                        <label for="addUserAdmin" class="block">Admin</label>
+                        <input type="checkbox" class="checkbox modal-box-checkbox-outline" id="addUserAdmin"
+                            name="admin">
+                    </div>
+                    <div class="modal-action">
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <button type="button" class="btn btn-danger"
+                            onclick="document.getElementById('addUserModal').close()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 </body>
 
 </html>
