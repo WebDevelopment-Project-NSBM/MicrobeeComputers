@@ -75,9 +75,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (data.success) {
                         localStorage.setItem('userId', data.userId);
                         if (data.admin) {
-                            showSuccessMessageLogin('Login successful! Redirecting to Admin Profile', '../admin/admin-profile.html');
+                            showSuccessMessageLogin('Login successful! Redirecting to Admin Panel', '../admin/user-management.html');
                         } else {
-                            showSuccessMessageLogin('Login successful! Redirecting to User Profile', '../user/user-profile.html');
+                            showSuccessMessageLogin('Login successful! Redirecting to User Panel', '../user/user-profile.html');
                         }
                     } else {
                         showErrorMessage('Login failed: ' + data.message);

@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const userProfileContainer = document.getElementById('userProfileContainer');
     const productAddedAlert = document.getElementById('productAdded');
 
+    if (!userId) {
+        window.location.href = '../auth/login.html';
+        return;
+    }
+
     showLoadingBar();
 
     function showLoadingBar() {
