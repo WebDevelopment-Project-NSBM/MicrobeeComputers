@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="card-text">Price: Rs ${item.price.toLocaleString()}</p>
                         <p class="card-text">Quantity: ${item.quantity}</p>
                         <div class="flex justify-between w-full">
-                            <button class="btn btn-primary btn-sm" onclick="removeFromCart(${item.pro_id})">Remove</button>
+                            <button class="btn btn-danger btn-sm" onclick="removeFromCart(${item.pro_id})">Remove</button>
                             <div class="flex">
                                 <button class="btn btn-primary btn-sm mr-1" onclick="increaseQuantity(${item.pro_id})">+</button>
                                 <button class="btn btn-primary btn-sm" onclick="decreaseQuantity(${item.pro_id})">-</button>
@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
             cartItemsContainer.insertAdjacentHTML('beforeend', checkoutButton);
         }
-        attachButtonResetHandlers();
+        attachButtonPrimaryResetHandlers();
     }
 
     function renderPagination(totalItems, currentPage) {
@@ -268,10 +268,11 @@ document.addEventListener("DOMContentLoaded", function () {
         adminProfileDropdown.style.display = 'none';
     }
 
-    attachButtonResetHandlers();
+    attachButtonPrimaryResetHandlers();
+    attachButtonDangerResetHandlers();
 
-    function attachButtonResetHandlers() {
-        document.querySelectorAll('.btn').forEach(button => {
+    function attachButtonPrimaryResetHandlers() {
+        document.querySelectorAll('.btn-primary').forEach(button => {
             button.addEventListener('mousedown', function () {
                 this.style.backgroundColor = '#A0A0A0';
                 this.style.color = '#000000';
@@ -293,6 +294,35 @@ document.addEventListener("DOMContentLoaded", function () {
             button.addEventListener('mouseout', function () {
                 if (!this.classList.contains('active')) {
                     this.style.backgroundColor = '#FFCC48';
+                    this.style.color = '#000000';
+                }
+            });
+        });
+    }
+
+    function attachButtonDangerResetHandlers() {
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.backgroundColor = '#A0A0A0';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.backgroundColor = '#ff5d48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseleave', function () {
+                this.style.backgroundColor = '#ff5d48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseover', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#A0A0A0';
+                    this.style.color = '#000000';
+                }
+            });
+            button.addEventListener('mouseout', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#ff5d48';
                     this.style.color = '#000000';
                 }
             });
