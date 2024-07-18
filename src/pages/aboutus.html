@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Casing Listing</title>
+    <title>About Us</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -13,7 +13,7 @@
     <script src="aboutus.js"></script>
 </head>
 
-<body>
+<body class="flex flex-col min-h-screen">
     <div id="loadingBar" class="loading-bar"></div>
     <header class="relative w-full">
         <div class="bg-yellow-500 py-2 hidden md:block">
@@ -68,7 +68,7 @@
 
     <nav class="bg-gray-800 text-white py-2">
         <div class="container mx-auto">
-            <a href="#" class="text-white">Home</a> / <a href="#" class="text-white nav-g-cat">Page</a>
+            <a href="#" class="text-white">Home</a> / <a href="#" class="text-white nav-g-cat">About Us</a>
         </div>
     </nav>
 
@@ -76,46 +76,56 @@
         Logout successful!
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-    <div class="w-full p-2 product-item">
-    <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title">Our Vision</h2>
-          <p>At MicroBee Computers, we envision a world where technology is seamlessly integrated into everyday life, enhancing experiences and fostering innovation. Our goal is to be the leading provider of cutting-edge computer parts and accessories, enabling our customers to build the tech of their dreams.</p>
+    <main class="flex-grow container mx-auto mt-10 flex flex-col items-center">
+        <div class="w-full md:w-4/5 lg:w-5/5 p-2 product-item mb-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Our Vision</h2>
+                    <p>At MicroBee Computers, we envision a world where technology is seamlessly integrated into
+                        everyday life, enhancing experiences and fostering innovation. Our goal is to be the leading
+                        provider of cutting-edge computer parts and accessories, enabling our customers to build the
+                        tech of their dreams.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      </div>
 
-      <div class="w-full p-2 product-item">
-        <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title ">Our Mission</h2>
-          <p>Our mission is to deliver the highest quality products and exceptional customer service. We strive to empower our customers with the knowledge and tools they need to create, innovate, and excel. By providing a vast selection of top-tier computer parts, we aim to be the go-to source for tech enthusiasts and professionals alike.</p>
+        <div class="w-full md:w-4/5 lg:w-5/5 p-2 product-item mb-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Our Mission</h2>
+                    <p>Our mission is to deliver the highest quality products and exceptional customer service. We
+                        strive to empower our customers with the knowledge and tools they need to create, innovate, and
+                        excel. By providing a vast selection of top-tier computer parts, we aim to be the go-to source
+                        for tech enthusiasts and professionals alike.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      </div>
 
-      <div class="w-full p-2 product-item">
-        <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title ">Our Legacy</h2>
-          <p>Founded in 2024, MicroBee Computers has grown from a small startup to a trusted name in the tech industry. Over the years, we have consistently provided reliable products and services, earning the loyalty of a diverse customer base. Our legacy is built on a foundation of integrity, innovation, and a commitment to excellence.</p>
+        <div class="w-full md:w-4/5 lg:w-5/5 p-2 product-item mb-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">Our Legacy</h2>
+                    <p>Founded in 2024, MicroBee Computers has grown from a small startup to a trusted name in the tech
+                        industry. Over the years, we have consistently provided reliable products and services, earning
+                        the loyalty of a diverse customer base. Our legacy is built on a foundation of integrity,
+                        innovation, and a commitment to excellence.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      </div>
 
-      <div class="w-full p-2 product-item">
-        <div class="card bg-base-100 shadow-xl">
-        <div class="card-body">
-          <h2 class="card-title ">The Future</h2>
-          <p>As we look to the future, MicroBee Computers is committed to staying at the forefront of technological advancements. We are constantly expanding our product range, exploring new innovations, and enhancing our customer experience. Our dedication to progress ensures that we will continue to be a trusted partner in your tech journey for years to come.</p>
+        <div class="w-full md:w-4/5 lg:w-5/5 p-2 product-item mb-4">
+            <div class="card bg-base-100 shadow-xl">
+                <div class="card-body">
+                    <h2 class="card-title">The Future</h2>
+                    <p>As we look to the future, MicroBee Computers is committed to staying at the forefront of
+                        technological advancements. We are constantly expanding our product range, exploring new
+                        innovations, and enhancing our customer experience. Our dedication to progress ensures that we
+                        will continue to be a trusted partner in your tech journey for years to come.</p>
+                </div>
+            </div>
         </div>
-      </div>
-      </div>
-      </div>
-    </div>
+    </main>
 
-    <div class="mt-10"></div>
     <footer class="footer footer-center bg-base-200 text-base-content rounded p-10">
         <nav class="grid grid-flow-col gap-4">
             <a class="link link-footer">About us</a>
