@@ -4,56 +4,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Categories</title>
-    <link rel="stylesheet" href="../styles/style.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .category-item {
-            margin-bottom: 20px;
-        }
-
-        .container-center {
-            display: flex;
-            justify-content: center;
-        }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="../styles/style.css" rel="stylesheet">
     <script src="home.js"></script>
 </head>
 
-<body>
-    <header class="bg-light py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <div class="logo">
-                <img src="logo.png" alt="Computer Shop">
+<body class="flex flex-col min-h-screen">
+    <div id="loadingBar" class="loading-bar"></div>
+    <header class="relative w-full">
+        <div class="bg-yellow-500 py-2 hidden md:block">
+            <div class="container-fluid mx-auto flex justify-center md:justify-center space-x-4">
+                <a class="link link-secondary text-black" href="#">Laptops</a>
+                <a class="link link-secondary text-black" href="#">Desktop Pcs</a>
+                <a class="link link-secondary text-black" href="#">Networking Devices</a>
+                <a class="link link-secondary text-black" href="#">Pc Parts</a>
+                <a class="link link-secondary text-black" href="#">All Other Products</a>
             </div>
-            <div class="contact">
-                <p class="mb-0">Hotline: <strong>Mobile Number</strong></p>
-            </div>
-            <div class="auth d-flex align-items-center">
-                <a href="./home.html" class="btn btn-primary mr-2">Home</a>
-                <a href="../auth/login.html" class="btn btn-primary mr-2">Log In</a>
-                <a href="../auth/register.html" class="btn btn-secondary mr-2">Register</a>
-                <a href="../cart/cart.html" class="btn btn-danger mr-2">Cart</a>
-                <a href="../user/user-profile.html" class="btn btn-primary mr-2">Profile</a>
-                <a href="../admin/user-management.html" class="btn btn-primary mr-2">Admin Profile</a>
+        </div>
+        <div class="container-fluid mx-auto flex flex-wrap justify-center items-center mt-4 md:mt-0">
+            <div class="flex items-center flex-wrap justify-center w-full">
+                <div class="logo mr-4">
+                    <img src="../logo/MicroBee Comupters.png" alt="MicroBee Computers" class="logo-img">
+                </div>
+                <div class="search-bar flex items-center w-full md:w-auto mx-4">
+                    <input type="text" placeholder="Search" class="ser-col w-full md:w-auto" />
+                    <i class="fas fa-search ml-2"></i>
+                </div>
+                <div class="auth flex items-center space-x-2">
+                    <a href="../structures/home.html" class="btn btn-home mr-2">Home</a>
+                    <a href="../auth/login.html" class="btn btn-home mr-2">
+                        <i class="fas fa-sign-in-alt mr-1"></i> Log In
+                    </a>
+                    <a href="../auth/register.html" class="btn btn-home mr-2">
+                        <i class="fas fa-user-plus mr-1"></i> Register
+                    </a>
+                    <a href="../cart/cart.html" class="btn btn-cart btn-warning mr-2">
+                        <i class="fas fa-shopping-cart"></i>
+                    </a>
+                    <div class="dropdown relative">
+                        <div tabindex="0" role="button" class="avatar placeholder">
+                            <div
+                                class="bg-neutral text-neutral-content rounded-full w-10 h-10 flex items-center justify-center">
+                                <span></span>
+                            </div>
+                        </div>
+                        <ul tabindex="0"
+                            class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute">
+                            <li id="user-profile-dropdown" style="display: none;"><a
+                                    href="../user/user-profile.html">Profile</a></li>
+                            <li id="admin-profile-dropdown" style="display: none;"><a
+                                    href="../admin/user-management.html">Admin Profile</a></li>
+                            <li><a id="logoutButton" href="#">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <nav class="bg-dark text-white py-2">
-        <div class="container">
+    <nav class="bg-gray-800 text-white py-2">
+        <div class="container mx-auto">
             <a href="#" class="text-white">Home</a>
         </div>
     </nav>
 
-    <div class="container mt-5">
-        <div class="row" id="categoryContainer">
-            <!-- Categories will be inserted here -->
+
+    <main class="flex-grow container mx-auto mt-10 main-content relative">
+        <!-- Alerts should be placed here to appear on top of content -->
+        <div id="logoutAlert" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2 z-50">
+            Logout successful!
         </div>
-    </div>
+        <div id="cartAlert" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2 z-50">
+            Product added to cart!
+        </div>
+
+        <div class="flex justify-between items-center mb-4">
+            <p id="productCount" class="text-black"></p>
+        </div>
+        <div class="container-center">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                id="productContainer">
+                <!-- Products will be inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer footer-center bg-base-200 text-base-content rounded p-10">
+        <nav class="grid grid-flow-col gap-4">
+            <a class="link link-footer">About us</a>
+            <a class="link link-footer">Contact</a>
+            <a class="link link-footer">Terms</a>
+            <a class="link link-footer">Conditions</a>
+        </nav>
+        <nav>
+            <div class="grid grid-flow-col gap-4">
+                <a href="#"><i class="fa-brands fa-youtube footer-icons"></i></a>
+                <a href="#"><i class="fa-brands fa-facebook footer-icons"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram footer-icons"></i></a>
+            </div>
+        </nav>
+        <aside>
+            <p>Copyright © 2024 - All right reserved by NSBM 23.2 Students Group S</p>
+        </aside>
+    </footer>
 </body>
 
 </html>
