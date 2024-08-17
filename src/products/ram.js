@@ -250,6 +250,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
     }
 
+    const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
+    const sidePanel = document.getElementById('sidePanel');
+    const menuToggle = document.getElementById('menuToggle');
+    const closePanel = document.getElementById('closePanel');
+    const categoryList = document.getElementById('categoryList');
+
+    sidePanel.style.overflowY = 'auto';
+
+    categories.forEach(category => {
+        const li = document.createElement('li');
+        li.className = "side-panel-li";
+        li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+        categoryList.appendChild(li);
+    });
+
+    menuToggle.addEventListener('click', function () {
+        sidePanel.classList.remove('-translate-x-full');
+    });
+
+    closePanel.addEventListener('click', function () {
+        sidePanel.classList.add('-translate-x-full');
+    });
+
     window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
         if (!userId) {
             showLoginAlert()

@@ -27,6 +27,57 @@ main {
     margin-bottom: 30px;
 }
 
+.side-panel {
+    background-color: #FFCC48;
+    color: #000000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto;
+}
+
+.side-panel-ul {
+    padding: 20px;
+    max-height: 100vh;
+}
+
+.side-panel-li {
+    list-style: none;
+    margin-bottom: 20px;
+}
+
+.side-panel-a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    color: #000000;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    text-transform: capitalize;
+    border-radius: 5px;
+}
+
+.side-panel-a:hover {
+    background-color: #A0A0A0;
+    color: #FFFFFF;
+}
+
+.side-panel-close {
+    color: #000000;
+}
+
+.menu-bar-icon {
+    color: #000000;
+}
+
+@media (max-width: 768px) {
+    .side-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+    }
+}
+
 .carousel {
     overflow: visible;
     padding-bottom: 20px;

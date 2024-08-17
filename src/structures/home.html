@@ -30,10 +30,15 @@
                 <div class="logo mr-4">
                     <img src="../logo/MicroBee Comupters.png" alt="MicroBee Computers" class="logo-img">
                 </div>
+
                 <div class="search-bar flex items-center w-full md:w-auto mx-4">
+                    <div class="menu-bar mr-4 cursor-pointer">
+                        <i id="menuToggle" class="fas fa-bars text-2xl menu-bar-icon"></i>
+                    </div>
                     <input type="text" placeholder="Search" class="ser-col w-full md:w-auto" />
                     <i class="fas fa-search ml-2"></i>
                 </div>
+
                 <div class="auth flex items-center space-x-2">
                     <a href="../structures/home.html" class="btn btn-home mr-2">Home</a>
                     <a href="../auth/login.html" class="btn btn-home mr-2">
@@ -72,7 +77,6 @@
         </div>
     </nav>
 
-
     <main class="flex-grow container mx-auto mt-10 main-content relative">
         <!-- Alerts should be placed here to appear on top of content -->
         <div id="logoutAlert" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2 z-50">
@@ -81,9 +85,20 @@
         <div id="cartAlert" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2 z-50">
             Product added to cart!
         </div>
-
         <div id="loginAlert" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2">
             Login required. Redirecting to login page...
+        </div>
+
+        <!-- Side Panel -->
+        <div id="sidePanel" class="side-panel fixed top-0 left-0 h-full w-64 transform -translate-x-full z-50">
+            <div class="flex justify-end p-4">
+                <i id="closePanel" class="fas fa-times text-2xl cursor-pointer side-panel-close"></i>
+            </div>
+            <nav class="p-4">
+                <ul id="categoryList" class="side-panel-ul">
+                    <!-- Categories will be dynamically inserted here -->
+                </ul>
+            </nav>
         </div>
 
         <div class="flex justify-between items-center mb-4">
