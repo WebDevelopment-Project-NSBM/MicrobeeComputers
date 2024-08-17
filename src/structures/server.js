@@ -9,6 +9,7 @@ const session = require('express-session');
 const config = require('../../config.json');
 const { Users } = require('../schema/users');
 const { Products } = require('../schema/products');
+const { ContactUs } = require('../schema/contactus');
 
 mongoose.set('strictQuery', true);
 mongoose.connect(config.mongodbURL, {
@@ -50,6 +51,23 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage });
+
+app.post('/api/contactus', async (req, res) => {
+    const { name, email, message } = req.body;
+    try {
+        const newContact = new ContactUs({
+            name,
+            email,
+            message,
+        });
+
+        await newContact.save();
+        res.status(201).json({ success: true, message: 'Message sent successfully' });
+    } catch (err) {
+        console.error('Error saving contact message:', err);
+        res.status(500).json({ success: false, message: 'Error saving message' });
+    }
+});
 
 app.get('/api/products', async (req, res) => {
     const { category, sortBy } = req.query;
