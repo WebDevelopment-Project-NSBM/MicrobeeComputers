@@ -8,6 +8,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadingBar = document.getElementById('loadingBar');
     const content = document.getElementById('content');
     const logoutAlert = document.getElementById('logoutAlert');
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+        showLoginAlert();
+        console.error('User not logged in');
+        return;
+    }
 
     function showLoading() {
         loadingBar.style.width = '100%';
@@ -21,13 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchCartItems() {
         showLoading();
-        fetch(`http://localhost:3000/api/cart/items`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
+        fetch(`http://localhost:3000/api/cart/items?userId=${userId}`)
+            .then(response => response.json())
             .then(data => {
                 cartItems = data;
                 renderCartItems();
@@ -138,7 +140,12 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchCartItems();
 
     window.removeFromCart = function (productId) {
-        fetch(`http://localhost:3000/api/cart/remove/${productId}`, {
+        if (!userId) {
+            alert('Please log in to remove items from your cart.');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/cart/remove/${productId}?userId=${userId}`, {
             method: 'DELETE',
         })
             .then(response => {
@@ -154,12 +161,17 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.increaseQuantity = function (productId) {
-        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
+        if (!userId) {
+            alert('Please log in to update the quantity in your cart.');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/cart/update/${productId}?userId=${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ operation: 'increase' }),
+            body: JSON.stringify({ userId, operation: 'increase' }),
         })
             .then(response => {
                 if (!response.ok) {
@@ -174,12 +186,17 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.decreaseQuantity = function (productId) {
-        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
+        if (!userId) {
+            alert('Please log in to update the quantity in your cart.');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/cart/update/${productId}?userId=${userId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ operation: 'decrease' }),
+            body: JSON.stringify({ userId, operation: 'decrease' }),
         })
             .then(response => {
                 if (!response.ok) {
@@ -192,8 +209,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error decreasing product quantity:', error);
             });
     };
-
-    const userId = localStorage.getItem('userId');
 
     const loginButton = document.querySelector('.auth a[href*="login"]');
     const registerButton = document.querySelector('.auth a[href*="register"]');
@@ -233,6 +248,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 logoutAlert.classList.add('hidden');
             }, 3000);
         }
+    }
+
+    function showLoginAlert() {
+        const loginAlert = document.getElementById('loginAlert');
+        loginAlert.classList.remove('hidden');
+        loginAlert.classList.add('show');
+        setTimeout(() => {
+            loginAlert.classList.remove('show');
+            loginAlert.classList.add('hidden');
+            window.location.href = '../auth/login.html';
+        }, 2000);
     }
 
     if (userId) {

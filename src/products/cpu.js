@@ -239,8 +239,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
     }
 
+    function showLoginAlert() {
+        const loginAlert = document.getElementById('loginAlert');
+        loginAlert.classList.remove('hidden');
+        loginAlert.classList.add('show');
+        setTimeout(() => {
+            loginAlert.classList.remove('show');
+            loginAlert.classList.add('hidden');
+            window.location.href = '../auth/login.html';
+        }, 2000);
+    }
+
     window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
+        if (!userId) {
+            showLoginAlert()
+            return;
+        }
+
         const cartItem = {
+            userId: userId,
             pro_id: productId,
             name: productName,
             category: productCategory,

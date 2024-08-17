@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (product.name.length > 25) {
             displayName = `${product.name.substring(0, 25)}<br>${product.name.substring(25, 50)}`;
         }
-
+        attachButtonResetHandlers();
         return `
             <div class="w-full p-2 product-item">
                     <div class="card bg-base-100 shadow-xl">
@@ -297,8 +297,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
     }
 
+    function showLoginAlert() {
+        const loginAlert = document.getElementById('loginAlert');
+        loginAlert.classList.remove('hidden');
+        loginAlert.classList.add('show');
+        setTimeout(() => {
+            loginAlert.classList.remove('show');
+            loginAlert.classList.add('hidden');
+            window.location.href = '../auth/login.html';
+        }, 2000);
+    }
+
     window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
+        if (!userId) {
+            showLoginAlert()
+            return;
+        }
+
         const cartItem = {
+            userId: userId,
             pro_id: productId,
             name: productName,
             category: productCategory,
@@ -344,3 +361,7 @@ document.addEventListener("DOMContentLoaded", function () {
         dropdownMenu.classList.remove('dropdown-right');
     });
 });
+
+function redirectToProductPage(productId) {
+    window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
+}

@@ -7,7 +7,6 @@ const fs = require('fs');
 const session = require('express-session');
 
 const config = require('../../config.json');
-const { CartItems } = require('../schema/cartItems');
 const { Users } = require('../schema/users');
 const { Products } = require('../schema/products');
 
@@ -198,63 +197,81 @@ app.delete('/api/products/delete/:id', async (req, res) => {
 });
 
 app.post('/api/cart/add', async (req, res) => {
-    const { pro_id, name, category, price, imageUrl, quantity } = req.body;
+    const { userId, pro_id, name, category, price, imageUrl, quantity } = req.body;
 
     try {
-        let cartItem = await CartItems.findOne({ pro_id });
-
-        if (cartItem) {
-            cartItem.quantity += quantity;
-        } else {
-            cartItem = new CartItems({
-                pro_id,
-                name,
-                category,
-                price,
-                imageUrl,
-                quantity,
-            });
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
         }
 
-        await cartItem.save();
-        res.status(201).send('CartItem added successfully');
+        const existingCartItem = user.cartItems.find(item => item.pro_id === pro_id);
+
+        if (existingCartItem) {
+            existingCartItem.quantity += quantity;
+        } else {
+            user.cartItems.push({ pro_id, name, category, price, imageUrl, quantity });
+        }
+
+        await user.save();
+        res.status(201).json({ success: true, message: 'Cart item added successfully' });
     } catch (err) {
-        console.error('Error saving cart item:', err);
-        res.status(500).send('Error saving cart item');
+        console.error('Error adding cart item:', err);
+        res.status(500).json({ success: false, message: 'Error adding cart item' });
     }
 });
 
 app.get('/api/cart/items', async (req, res) => {
+    const { userId } = req.query;
+
     try {
-        const cartItems = await CartItems.find();
-        res.status(200).json(cartItems);
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json(user.cartItems);
     } catch (err) {
         console.error('Error fetching cart items:', err);
-        res.status(500).send('Error fetching cart items');
+        res.status(500).json({ success: false, message: 'Error fetching cart items' });
     }
 });
 
 app.delete('/api/cart/remove/:pro_id', async (req, res) => {
-    const pro_id = req.params.pro_id;
+    const { userId } = req.query;
+    const { pro_id } = req.params;
 
     try {
-        await CartItems.deleteOne({ pro_id });
-        res.status(200).send('Item removed from cart');
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.cartItems = user.cartItems.filter(item => item.pro_id !== parseInt(pro_id));
+
+        await user.save();
+        res.status(200).json({ success: true, message: 'Item removed from cart' });
     } catch (err) {
         console.error('Error removing item from cart:', err);
-        res.status(500).send('Error removing item from cart');
+        res.status(500).json({ success: false, message: 'Error removing item from cart' });
     }
 });
 
 app.put('/api/cart/update/:pro_id', async (req, res) => {
-    const pro_id = req.params.pro_id;
+    const { userId } = req.query;
+    const { pro_id } = req.params;
     const { operation } = req.body;
 
     try {
-        const cartItem = await CartItems.findOne({ pro_id });
+        const user = await Users.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const cartItem = user.cartItems.find(item => item.pro_id === parseInt(pro_id));
 
         if (!cartItem) {
-            return res.status(404).send('Cart item not found');
+            return res.status(404).json({ success: false, message: 'Cart item not found' });
         }
 
         if (operation === 'increase') {
@@ -263,17 +280,17 @@ app.put('/api/cart/update/:pro_id', async (req, res) => {
             if (cartItem.quantity > 1) {
                 cartItem.quantity--;
             } else {
-                return res.status(400).send('Quantity cannot be less than 1');
+                return res.status(400).json({ success: false, message: 'Quantity cannot be less than 1' });
             }
         } else {
-            return res.status(400).send('Invalid operation');
+            return res.status(400).json({ success: false, message: 'Invalid operation' });
         }
 
-        await cartItem.save();
-        res.status(200).send('Cart item quantity updated successfully');
+        await user.save();
+        res.status(200).json({ success: true, message: 'Cart item quantity updated successfully' });
     } catch (err) {
         console.error('Error updating cart item:', err);
-        res.status(500).send('Error updating cart item');
+        res.status(500).json({ success: false, message: 'Error updating cart item' });
     }
 });
 
