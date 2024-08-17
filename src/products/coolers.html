@@ -13,7 +13,7 @@
     <script src="coolers.js"></script>
 </head>
 
-<body>
+<body class="flex flex-col min-h-screen">
     <div id="loadingBar" class="loading-bar"></div>
     <header class="relative w-full">
         <div class="bg-yellow-500 py-2 hidden md:block">
@@ -75,7 +75,7 @@
         </div>
     </nav>
 
-    <div id="content" class="container mx-auto mt-5 main-content">
+    <main class="flex-grow container mx-auto mt-10 main-content">
         <div class="flex justify-between items-center mb-4">
             <p id="productCount" class="text-black"></p>
             <div class="dropdown dropdown-hover relative" id="sortDropdown">
@@ -97,7 +97,6 @@
         <div id="logoutAlert" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2">
             Logout successful!
         </div>
-
         <div id="cartAlert" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2">
             Product added to cart!
         </div>
@@ -122,8 +121,8 @@
                 <!-- Page navigation for each button -->
             </ul>
         </nav>
-    </div>
-    <div class="mt-10"></div>
+    </main>
+
     <footer class="footer footer-center bg-base-200 text-base-content rounded p-10">
         <nav class="grid grid-flow-col gap-4">
             <a class="link link-footer">About us</a>
