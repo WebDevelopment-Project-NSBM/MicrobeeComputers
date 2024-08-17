@@ -342,24 +342,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error('Error adding product to cart:', error);
             });
     };
-
-    const sortDropdown = document.getElementById('sortDropdown');
-    const dropdownMenu = sortDropdown.querySelector('.dropdown-content');
-
-    sortDropdown.addEventListener('mouseenter', function () {
-        const rect = dropdownMenu.getBoundingClientRect();
-        const windowWidth = window.innerWidth;
-
-        if (rect.right > windowWidth) {
-            dropdownMenu.classList.add('dropdown-right');
-        } else {
-            dropdownMenu.classList.remove('dropdown-right');
-        }
-    });
-
-    sortDropdown.addEventListener('mouseleave', function () {
-        dropdownMenu.classList.remove('dropdown-right');
-    });
 });
 
 function redirectToProductPage(productId) {
