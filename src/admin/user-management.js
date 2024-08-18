@@ -75,6 +75,11 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
+
     function fetchUserProfile() {
         showLoadingBar();
         fetch(`http://localhost:3000/api/user/profile`, {
@@ -84,18 +89,31 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
-            .then(data => {
+            .then(async response => {
                 hideLoadingBar();
-                if (data.email) {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.email) {
                     if (!data.admin) {
                         showAlert('You are not an admin user');
                         adminContent.innerHTML = `
-                            <div class="container mx-auto text-center mt-5">
-                                <h1 class="text-3xl font-bold mb-4">You are not an admin user</h1>
-                                <a href="../structures/home.html" class="btn btn-primary">Home</a>
-                            </div>
-                        `;
+                        <div class="container mx-auto text-center mt-5">
+                            <h1 class="text-3xl font-bold mb-4">You are not an admin user</h1>
+                            <a href="../structures/home.html" class="btn btn-primary">Home</a>
+                        </div>
+                    `;
                         return;
                     }
                     renderUserProfile(data);
@@ -132,7 +150,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user list');
+                }
+                return response.json();
+            })
             .then(data => {
                 users = data;
                 renderUserList();

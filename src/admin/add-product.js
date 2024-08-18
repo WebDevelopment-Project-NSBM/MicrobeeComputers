@@ -148,6 +148,11 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
+
     function fetchUserProfile() {
         showLoadingBar();
         fetch(`http://localhost:3000/api/user/profile`, {
@@ -157,7 +162,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                hideLoadingBar();
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 hideLoadingBar();
                 if (data.email) {
@@ -199,7 +218,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                hideLoadingBar();
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 const { email, admin } = data;
                 if (email) {
