@@ -27,7 +27,7 @@ app.use(cors());
 app.use(express.json());
 
 function generateToken(user) {
-    return jwt.sign({ userId: user._id, admin: user.admin }, 'microbeewebprivatekeynewsecretkey2024newkeys', { expiresIn: 10 });
+    return jwt.sign({ userId: user._id, admin: user.admin }, 'microbeewebprivatekeynewsecretkey2024newkeys', { expiresIn: '7d' });
 }
 
 function authenticateToken(req, res, next) {
