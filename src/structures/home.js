@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartAlert = document.getElementById('cartAlert');
     const logoutAlert = document.getElementById('logoutAlert');
 
-
     function showLoading() {
         loadingBar.style.width = '100%';
         loadingBar.style.display = 'block';
@@ -18,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showLoading();
     setTimeout(hideLoading, 180);
 
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
     const loginButton = document.querySelector('.auth a[href*="login"]');
     const registerButton = document.querySelector('.auth a[href*="register"]');
     const userProfileDropdown = document.getElementById('user-profile-dropdown');
@@ -31,12 +30,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.removeItem('userId');
+                    localStorage.removeItem('authToken');
                     showLogoutAlert();
                     setTimeout(() => {
                         window.location.href = '../auth/login.html';
@@ -88,15 +88,15 @@ document.addEventListener("DOMContentLoaded", function () {
             const productsForSlide = products.slice(i, i + itemsPerSlide);
 
             carouselHTML += `
-    <div id="${category}-slide${slideIndex}" class="carousel-item w-full flex justify-center transition-opacity duration-1000 ease-in-out" style="opacity: 0;">
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            ${productsForSlide.map(product => createProductCard(product)).join('')}
-        </div>
-        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
-            <a href="#${category}-slide${slideIndex - 1}" class="btn btn-circle custom-carousel-arrow left-arrow">❮</a>
-            <a href="#${category}-slide${slideIndex + 1}" class="btn btn-circle custom-carousel-arrow right-arrow">❯</a>
-        </div>
-    </div>`;
+                <div id="${category}-slide${slideIndex}" class="carousel-item w-full flex justify-center transition-opacity duration-1000 ease-in-out" style="opacity: 0;">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                        ${productsForSlide.map(product => createProductCard(product)).join('')}
+                    </div>
+                    <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                        <a href="#${category}-slide${slideIndex - 1}" class="btn btn-circle custom-carousel-arrow left-arrow">❮</a>
+                        <a href="#${category}-slide${slideIndex + 1}" class="btn btn-circle custom-carousel-arrow right-arrow">❯</a>
+                    </div>
+                </div>`;
         }
 
         return carouselHTML;
@@ -248,11 +248,15 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelector('main').appendChild(mainContainer);
     categories.forEach(category => fetchProducts(category));
 
-    if (userId) {
+    if (authToken) {
         loginButton.style.display = 'none';
         registerButton.style.display = 'none';
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -331,13 +335,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
-        if (!userId) {
+        if (!authToken) {
             showLoginAlert()
             return;
         }
 
         const cartItem = {
-            userId: userId,
             pro_id: productId,
             name: productName,
             category: productCategory,
@@ -350,6 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify(cartItem),
         })

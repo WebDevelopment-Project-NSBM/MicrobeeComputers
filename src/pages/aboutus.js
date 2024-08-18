@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     showLoading();
     setTimeout(hideLoading, 180);
 
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
 
     const loginButton = document.querySelector('.auth a[href*="login"]');
     const registerButton = document.querySelector('.auth a[href*="register"]');
@@ -29,12 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.removeItem('userId');
+                    localStorage.removeItem('authToken');
                     showLogoutAlert();
                     setTimeout(() => {
                         window.location.href = '../auth/login.html';
@@ -55,11 +56,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 3000);
     }
 
-    if (userId) {
+    if (authToken) {
         loginButton.style.display = 'none';
         registerButton.style.display = 'none';
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -84,5 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutButton.addEventListener('click', handleLogout);
     } else {
         avatar.style.display = 'none';
+        userProfileDropdown.style.display = 'none';
+        adminProfileDropdown.style.display = 'none';
     }
 });

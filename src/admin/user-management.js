@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     const userProfileContainer = document.getElementById('userProfileContainer');
     const logoutButton = document.getElementById('logoutButton');
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
     const loadingBar = document.getElementById('loadingBar');
     const userListContainer = document.getElementById('userListContainer');
     const userPaginationContainer = document.getElementById('userPaginationContainer');
@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentPage = 1;
     let users = [];
 
-    if (!userId) {
+    if (!authToken) {
         window.location.href = '../auth/login.html';
         return;
     }
@@ -58,12 +58,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.removeItem('userId');
+                    localStorage.removeItem('authToken');
                     showLogoutMessage('Logout successful!');
                 } else {
                     console.error('Error logging out:', data.message);
@@ -76,10 +77,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchUserProfile() {
         showLoadingBar();
-        fetch(`http://localhost:3000/api/user/profile?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
@@ -127,6 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
@@ -203,11 +206,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function deleteUser(userId) {
         try {
-            const requestingUserId = localStorage.getItem('userId');
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             }).then(response => {
                 if (!response.ok) {
@@ -225,6 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
 
@@ -259,11 +263,11 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
 
         try {
-            const requestingUserId = localStorage.getItem('userId');
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             }).then(response => {
                 if (!response.ok) {
@@ -288,6 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 },
                 body: JSON.stringify(user)
             });
@@ -311,11 +316,11 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
 
         try {
-            const requestingUserId = localStorage.getItem('userId');
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             }).then(response => {
                 if (!response.ok) {
@@ -340,6 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 },
                 body: JSON.stringify(user)
             });
@@ -368,12 +374,17 @@ document.addEventListener("DOMContentLoaded", function () {
     window.deleteUser = deleteUser;
     window.editUser = editUser;
 
-    if (userId) {
+    if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -404,7 +415,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         logoutButton.addEventListener('click', function (event) {
             event.preventDefault();
-            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
             showLogoutMessage('Logout successful!');
         });
     } else {

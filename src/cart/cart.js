@@ -8,9 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const loadingBar = document.getElementById('loadingBar');
     const content = document.getElementById('content');
     const logoutAlert = document.getElementById('logoutAlert');
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
 
-    if (!userId) {
+    if (!authToken) {
         showLoginAlert();
         console.error('User not logged in');
         return;
@@ -28,12 +28,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchCartItems() {
         showLoading();
-        fetch(`http://localhost:3000/api/cart/items?userId=${userId}`)
+        fetch(`http://localhost:3000/api/cart/items`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
-                cartItems = data;
-                renderCartItems();
-                renderPagination(cartItems.length, currentPage);
+                if (Array.isArray(data)) {
+                    cartItems = data;
+                    renderCartItems();
+                    renderPagination(cartItems.length, currentPage);
+                } else {
+                    throw new Error('Invalid data format');
+                }
             })
             .catch(error => {
                 console.error('Error fetching cart items:', error);
@@ -140,13 +148,16 @@ document.addEventListener("DOMContentLoaded", function () {
     fetchCartItems();
 
     window.removeFromCart = function (productId) {
-        if (!userId) {
+        if (!authToken) {
             alert('Please log in to remove items from your cart.');
             return;
         }
 
-        fetch(`http://localhost:3000/api/cart/remove/${productId}?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/cart/remove/${productId}`, {
             method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
         })
             .then(response => {
                 if (!response.ok) {
@@ -161,17 +172,18 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.increaseQuantity = function (productId) {
-        if (!userId) {
+        if (!authToken) {
             alert('Please log in to update the quantity in your cart.');
             return;
         }
 
-        fetch(`http://localhost:3000/api/cart/update/${productId}?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ userId, operation: 'increase' }),
+            body: JSON.stringify({ operation: 'increase' }),
         })
             .then(response => {
                 if (!response.ok) {
@@ -186,17 +198,18 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.decreaseQuantity = function (productId) {
-        if (!userId) {
+        if (!authToken) {
             alert('Please log in to update the quantity in your cart.');
             return;
         }
 
-        fetch(`http://localhost:3000/api/cart/update/${productId}?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/cart/update/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             },
-            body: JSON.stringify({ userId, operation: 'decrease' }),
+            body: JSON.stringify({ operation: 'decrease' }),
         })
             .then(response => {
                 if (!response.ok) {
@@ -222,12 +235,13 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    localStorage.removeItem('userId');
+                    localStorage.removeItem('authToken');
                     showLogoutAlert();
                     setTimeout(() => {
                         window.location.href = '../auth/login.html';
@@ -261,11 +275,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
     }
 
-    if (userId) {
+    if (authToken) {
         loginButton.style.display = 'none';
         registerButton.style.display = 'none';
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -327,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function attachButtonDangerResetHandlers() {
-        document.querySelectorAll('.btn-primary').forEach(button => {
+        document.querySelectorAll('.btn-danger').forEach(button => {
             button.addEventListener('mousedown', function () {
                 this.style.backgroundColor = '#A0A0A0';
                 this.style.color = '#000000';

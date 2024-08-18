@@ -2,12 +2,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const addProductForm = document.getElementById('addProductForm');
     const loadingBar = document.getElementById('loadingBar');
     const logoutButton = document.getElementById('logoutButton');
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
     const adminContent = document.getElementById('adminContent');
     const userProfileContainer = document.getElementById('userProfileContainer');
     const productAddedAlert = document.getElementById('productAdded');
 
-    if (!userId) {
+    if (!authToken) {
         window.location.href = '../auth/login.html';
         return;
     }
@@ -63,11 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
         showLoadingBar();
 
-        const requestingUserId = localStorage.getItem('userId');
-        const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+        const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         }).then(response => {
             if (!response.ok) {
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.json();
         });
 
-        if (!requestingUser.admin) {
+        if (!requestingUser || !requestingUser.admin) {
             hideLoadingBar();
             showAlert('Only admin users can add new products');
             return;
@@ -100,13 +100,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const response = await fetch('http://localhost:3000/api/products/add', {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            },
             body: formData
         });
 
         const result = await response.json();
         hideLoadingBar();
-
-        alert(result);
 
         if (result.success) {
             showProductAddedAlert();
@@ -149,10 +150,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchUserProfile() {
         showLoadingBar();
-        fetch(`http://localhost:3000/api/user/profile?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
@@ -186,12 +188,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchUserProfile();
 
-    if (userId) {
+    if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -222,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         logoutButton.addEventListener('click', function (event) {
             event.preventDefault();
-            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
             showLogoutMessage('Logout successful!');
         });
     } else {

@@ -4,8 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-const session = require('express-session');
-
+const jwt = require('jsonwebtoken');
 const config = require('../../config.json');
 const { Users } = require('../schema/users');
 const { Products } = require('../schema/products');
@@ -27,15 +26,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use(session({
-    secret: 'asd980h9h39hahu9gbnu3bnag9uabnrfanunbrtiotnuoi3',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 3600 * 1000,
-        httpOnly: true
-    }
-}));
+function generateToken(user) {
+    return jwt.sign({ userId: user._id, admin: user.admin }, 'microbeewebprivatekeynewsecretkey2024newkeys', { expiresIn: '7d' });
+}
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (token == null) return res.status(401).json({ error: 'Unauthorized' });
+
+    jwt.verify(token, 'microbeewebprivatekeynewsecretkey2024newkeys', (err, user) => {
+        if (err) return res.status(403).json({ error: 'Forbidden' });
+        req.user = user;
+        next();
+    });
+}
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -116,7 +121,7 @@ app.get('/api/products/highest-pro-id', async (req, res) => {
     }
 });
 
-app.post('/api/products/add', upload.single('image'), async (req, res) => {
+app.post('/api/products/add', upload.single('image'), authenticateToken, async (req, res) => {
     const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
 
     const allowedCategories = ['cpu', 'motherboards', 'ram', 'gpu', 'storage', 'monitor', 'casing', 'powersupply', 'coolers', 'ups'];
@@ -159,7 +164,7 @@ app.post('/api/products/add', upload.single('image'), async (req, res) => {
     }
 });
 
-app.put('/api/products/edit/:id', upload.single('image'), async (req, res) => {
+app.put('/api/products/edit/:id', upload.single('image'), authenticateToken, async (req, res) => {
     const { id } = req.params;
     const { name, price, discountRate, category, description, features, inStock, latest, popularity } = req.body;
 
@@ -202,7 +207,7 @@ app.put('/api/products/edit/:id', upload.single('image'), async (req, res) => {
     }
 });
 
-app.delete('/api/products/delete/:id', async (req, res) => {
+app.delete('/api/products/delete/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -214,8 +219,9 @@ app.delete('/api/products/delete/:id', async (req, res) => {
     }
 });
 
-app.post('/api/cart/add', async (req, res) => {
-    const { userId, pro_id, name, category, price, imageUrl, quantity } = req.body;
+app.post('/api/cart/add', authenticateToken, async (req, res) => {
+    const { pro_id, name, category, price, imageUrl, quantity } = req.body;
+    const userId = req.user.userId;
 
     try {
         const user = await Users.findById(userId);
@@ -239,8 +245,8 @@ app.post('/api/cart/add', async (req, res) => {
     }
 });
 
-app.get('/api/cart/items', async (req, res) => {
-    const { userId } = req.query;
+app.get('/api/cart/items', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
 
     try {
         const user = await Users.findById(userId);
@@ -255,8 +261,8 @@ app.get('/api/cart/items', async (req, res) => {
     }
 });
 
-app.delete('/api/cart/remove/:pro_id', async (req, res) => {
-    const { userId } = req.query;
+app.delete('/api/cart/remove/:pro_id', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
     const { pro_id } = req.params;
 
     try {
@@ -275,8 +281,8 @@ app.delete('/api/cart/remove/:pro_id', async (req, res) => {
     }
 });
 
-app.put('/api/cart/update/:pro_id', async (req, res) => {
-    const { userId } = req.query;
+app.put('/api/cart/update/:pro_id', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
     const { pro_id } = req.params;
     const { operation } = req.body;
 
@@ -314,18 +320,12 @@ app.put('/api/cart/update/:pro_id', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
     const { email, password, admin } = req.body;
-    const requestingUserId = req.session.userId;
 
     if (email.length >= 80 || password.length >= 40) {
         return res.status(400).json({ success: false, message: 'Email or password exceeds character limit' });
     }
 
     try {
-        // const requestingUser = await Users.findById(requestingUserId);
-        // if (!requestingUser || !requestingUser.admin) {
-        //     return res.status(403).json({ success: false, message: 'Only admin users can register new users' });
-        // }
-
         const existingUser = await Users.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ success: false, message: 'User already exists' });
@@ -339,7 +339,6 @@ app.post('/api/register', async (req, res) => {
     }
 });
 
-
 app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
@@ -350,8 +349,8 @@ app.post('/api/login', async (req, res) => {
     try {
         const user = await Users.findOne({ email: email.toLowerCase(), password });
         if (user) {
-            req.session.userId = user._id.toString();
-            res.status(200).json({ success: true, userId: user._id, admin: user.admin });
+            const token = generateToken(user);
+            res.status(200).json({ success: true, token, admin: user.admin });
         } else {
             res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
@@ -360,9 +359,8 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
-
-app.get('/api/user/profile', async (req, res) => {
-    const userId = req.query.userId || req.session.userId;
+app.get('/api/user/profile', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
 
     try {
         const user = await Users.findById(userId);
@@ -377,11 +375,8 @@ app.get('/api/user/profile', async (req, res) => {
     }
 });
 
-app.get('/api/user/details', async (req, res) => {
-    const userId = req.query.userId;
-    if (!userId) {
-        return res.status(400).json({ error: 'UserId is required' });
-    }
+app.get('/api/user/details', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
 
     try {
         const user = await Users.findById(userId).select('email admin');
@@ -396,8 +391,8 @@ app.get('/api/user/details', async (req, res) => {
     }
 });
 
-app.delete('/api/user/delete/:userId', async (req, res) => {
-    const userId = req.params.userId;
+app.delete('/api/user/delete/:userId', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
 
     try {
         await Users.findByIdAndDelete(userId);
@@ -408,7 +403,7 @@ app.delete('/api/user/delete/:userId', async (req, res) => {
     }
 });
 
-app.get('/api/users', async (req, res) => {
+app.get('/api/users', authenticateToken, async (req, res) => {
     try {
         const users = await Users.find();
         res.status(200).json(users);
@@ -418,8 +413,8 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-app.put('/api/user/edit/:userId', async (req, res) => {
-    const userId = req.params.userId;
+app.put('/api/user/edit/:userId', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
     const { email, admin } = req.body;
 
     try {
@@ -440,15 +435,7 @@ app.put('/api/user/edit/:userId', async (req, res) => {
 });
 
 app.post('/api/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.error('Error destroying session:', err);
-            return res.status(500).json({ success: false, message: 'Error during logout' });
-        }
-
-        res.clearCookie('connect.sid', { path: '/' });
-        res.status(200).json({ success: true, message: 'Logged out successfully' });
-    });
+    res.status(200).json({ success: true, message: 'Logged out successfully' });
 });
 
 const PORT = 3000;

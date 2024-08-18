@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const productDetailsContainer = document.getElementById('productDetails');
     const logoutAlert = document.getElementById('logoutAlert');
     const cartAlert = document.getElementById('cartAlert');
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
 
     function showLoading() {
         loadingBar.style.width = '100%';
@@ -36,12 +36,16 @@ document.addEventListener("DOMContentLoaded", function () {
             hideLoading();
         });
 
-    if (userId) {
+    if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -191,13 +195,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     window.addToCart = function (productId, productName, productCategory, productPrice, productImageUrl) {
-        if (!userId) {
-            showLoginAlert()
+        if (!authToken) {
+            showLoginAlert();
             return;
         }
         const quantity = parseInt(document.getElementById('quantity').value);
         const cartItem = {
-            userId: userId,
+            authToken: authToken,
             pro_id: productId,
             name: productName,
             category: productCategory,
@@ -210,6 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             },
             body: JSON.stringify(cartItem),
         })
@@ -247,11 +252,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             const data = await response.json();
             if (data.success) {
-                localStorage.removeItem('userId');
+                localStorage.removeItem('authToken');
                 showLogoutAlert();
                 setTimeout(() => {
                     window.location.href = '../../auth/login.html';

@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        localStorage.setItem('userId', data.userId);
+                        localStorage.setItem('authToken', data.token);
                         if (data.admin) {
                             showSuccessMessageLogin('Login successful! Redirecting to Admin Panel', '../admin/user-management.html');
                         } else {
@@ -127,15 +127,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
     const logoutButton = document.getElementById('logoutButton');
 
-    if (userId) {
+    if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -158,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         logoutButton.addEventListener('click', function (event) {
             event.preventDefault();
-            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
             showLogoutMessage('Logout successful!');
         });
     } else {

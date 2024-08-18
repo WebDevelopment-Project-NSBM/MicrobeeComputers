@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const editProductModalToggle = document.getElementById('editProductModal');
     const loadingBar = document.getElementById('loadingBar');
     const logoutButton = document.getElementById('logoutButton');
-    const userId = localStorage.getItem('userId');
+    const authToken = localStorage.getItem('authToken');
     const adminContent = document.getElementById('adminContent');
     const manageProductsSection = document.getElementById('manageProductsSection');
     let products = [];
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const itemsPerPageProduct = 12;
     let selectedCategory = '';
 
-    if (!userId) {
+    if (!authToken) {
         window.location.href = '../auth/login.html';
         return;
     }
@@ -59,10 +59,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchUserProfile() {
         showLoadingBar();
-        fetch(`http://localhost:3000/api/user/profile?userId=${userId}`, {
+        fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
@@ -94,12 +95,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
     fetchUserProfile();
 
-    if (userId) {
+    if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details?userId=${userId}`)
+        fetch(`http://localhost:3000/api/user/details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 const { email, admin } = data;
@@ -130,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         logoutButton.addEventListener('click', function (event) {
             event.preventDefault();
-            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
             showLogoutMessage('Logout successful!');
         });
     } else {
@@ -236,11 +242,11 @@ document.addEventListener("DOMContentLoaded", function () {
     async function deleteProduct(productId) {
         showLoadingBar();
 
-        const requestingUserId = localStorage.getItem('userId');
-        const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+        const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         }).then(response => response.json());
 
@@ -255,6 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
                 }
             });
             if (response.ok) {
@@ -273,11 +280,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function editProduct(productId) {
         showLoadingBar();
 
-        const requestingUserId = localStorage.getItem('userId');
-        fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+        fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         })
             .then(response => response.json())
@@ -301,7 +308,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById('editLatest').value = product.latest.split('T')[0];
                     document.getElementById('editPopularity').value = product.popularity;
 
-                    editProductModalToggle.checked = true; // Show modal
+                    editProductModalToggle.checked = true;
                 }
 
                 hideLoadingBar();
@@ -318,11 +325,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const features = formData.get('features') || '';
         formData.set('features', features.split(',').map(feature => feature.trim()).join(','));
 
-        const requestingUserId = localStorage.getItem('userId');
-        const requestingUser = await fetch(`http://localhost:3000/api/user/profile?userId=${requestingUserId}`, {
+        const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
             }
         }).then(response => response.json());
 
@@ -335,6 +342,9 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             const response = await fetch(`http://localhost:3000/api/products/edit/${productId}`, {
                 method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                },
                 body: formData
             });
 
