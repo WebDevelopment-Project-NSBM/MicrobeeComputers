@@ -1,7 +1,7 @@
 {
   "name": "nsbm-website",
   "version": "1.0.0",
-  "main": "src/structures/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
