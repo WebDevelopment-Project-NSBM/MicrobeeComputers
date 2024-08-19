@@ -17,13 +17,43 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showLoading() {
-        loadingBar.style.width = '100%';
-        loadingBar.style.display = 'block';
+        if (loadingBar) {
+            loadingBar.style.width = '100%';
+            loadingBar.style.display = 'block';
+        }
     }
 
     function hideLoading() {
-        loadingBar.style.width = '0';
-        content.classList.add('show');
+        if (loadingBar) {
+            loadingBar.style.width = '0';
+        }
+        if (content) {
+            content.classList.add('show');
+        }
+    }
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
     }
 
     function fetchCartItems() {
@@ -33,7 +63,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                hideLoading();
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 if (Array.isArray(data)) {
                     cartItems = data;
@@ -149,7 +193,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.removeFromCart = function (productId) {
         if (!authToken) {
-            alert('Please log in to remove items from your cart.');
+            showAlert('Please log in to remove items from your cart.');
             return;
         }
 
@@ -159,8 +203,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => {
-                if (!response.ok) {
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                        return;
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 console.log(`Product ${productId} removed from cart`);
@@ -173,7 +225,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.increaseQuantity = function (productId) {
         if (!authToken) {
-            alert('Please log in to update the quantity in your cart.');
+            showAlert('Please log in to update the quantity in your cart.');
             return;
         }
 
@@ -185,8 +237,16 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ operation: 'increase' }),
         })
-            .then(response => {
-                if (!response.ok) {
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                        return;
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 console.log(`Product ${productId} quantity increased`);
@@ -199,7 +259,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     window.decreaseQuantity = function (productId) {
         if (!authToken) {
-            alert('Please log in to update the quantity in your cart.');
+            showAlert('Please log in to update the quantity in your cart.');
             return;
         }
 
@@ -211,8 +271,16 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify({ operation: 'decrease' }),
         })
-            .then(response => {
-                if (!response.ok) {
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                        return;
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 console.log(`Product ${productId} quantity decreased`);
@@ -284,7 +352,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                hideLoading();
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 const { email, admin } = data;
 

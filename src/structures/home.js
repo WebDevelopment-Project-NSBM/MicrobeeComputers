@@ -1,21 +1,47 @@
 document.addEventListener("DOMContentLoaded", function () {
     const loadingBar = document.getElementById('loadingBar');
-    const content = document.getElementById('content');
     const cartAlert = document.getElementById('cartAlert');
     const logoutAlert = document.getElementById('logoutAlert');
 
     function showLoading() {
-        loadingBar.style.width = '100%';
-        loadingBar.style.display = 'block';
+        if (loadingBar) {
+            loadingBar.style.width = '100%';
+            loadingBar.style.display = 'block';
+        }
     }
 
     function hideLoading() {
-        loadingBar.style.width = '0';
-        content.classList.add('show');
+        if (loadingBar) {
+            loadingBar.style.width = '0';
+        }
     }
 
     showLoading();
     setTimeout(hideLoading, 180);
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
 
     const authToken = localStorage.getItem('authToken');
     const loginButton = document.querySelector('.auth a[href*="login"]');
@@ -257,7 +283,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Authorization': `Bearer ${authToken}`
             }
         })
-            .then(response => response.json())
+            .then(async response => {
+                hideLoading();
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Error fetching user profile');
+                } else {
+                    return response.json();
+                }
+            })
             .then(data => {
                 const { email, admin } = data;
 
@@ -357,10 +397,20 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(cartItem),
         })
-            .then(response => {
-                if (!response.ok) {
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                return response.json();
+            })
+            .then(data => {
                 console.log(`Product ${productId} added to cart`);
                 showCartAlert();
             })

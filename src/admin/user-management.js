@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function showAlert(message) {
+    function showTokenExpireLogOutAlert(message) {
         const alertDiv = document.createElement('div');
         alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
         alertDiv.textContent = message;
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showLogoutMessage(message) {
-        showAlert(message);
+        showTokenExpireLogOutAlert(message);
         setTimeout(() => {
             window.location.href = '../auth/login.html';
         }, 1000);
