@@ -96,7 +96,7 @@ app.post('/api/contactus', async (req, res) => {
 app.get('/api/products', async (req, res) => {
     const { category, sortBy } = req.query;
 
-    let filter = {};
+    let filter = { inStock: true };
     if (category) {
         filter.category = category;
     }
@@ -243,6 +243,14 @@ app.post('/api/cart/add', authenticateToken, async (req, res) => {
     const userId = req.user.userId;
 
     try {
+        const product = await Products.findOne({ pro_id });
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        if (!product.inStock) {
+            return res.status(400).json({ success: false, message: 'Product is out of stock' });
+        }
         const user = await Users.findById(userId);
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -272,8 +280,12 @@ app.get('/api/cart/items', authenticateToken, async (req, res) => {
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
         }
-
-        res.status(200).json(user.cartItems);
+        const productIds = user.cartItems.map(item => item.pro_id);
+        const productsInStock = await Products.find({ pro_id: { $in: productIds }, inStock: true });
+        const cartItemsInStock = user.cartItems.filter(item =>
+            productsInStock.some(product => product.pro_id === item.pro_id)
+        );
+        res.status(200).json(cartItemsInStock);
     } catch (err) {
         console.error('Error fetching cart items:', err);
         res.status(500).json({ success: false, message: 'Error fetching cart items' });
@@ -338,7 +350,7 @@ app.put('/api/cart/update/:pro_id', authenticateToken, async (req, res) => {
 });
 
 app.get('/api/orderCart/items/:userId', authenticateToken, async (req, res) => {
-    // Check if the requesting user is an admin
+
     if (!req.user.admin) {
         return res.status(403).json({ success: false, message: 'Access forbidden: Admins only' });
     }
@@ -375,6 +387,27 @@ app.post('/api/cart/checkout', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error('Error during checkout:', error);
         res.status(500).json({ success: false, message: 'Error during checkout.' });
+    }
+});
+
+app.put('/api/order/complete/:userId', authenticateToken, async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const user = await Users.findOne({ userId });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        user.orderStatus = 0;
+        user.cartItems = [];
+
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Order completed successfully' });
+    } catch (err) {
+        console.error('Error completing order:', err);
+        res.status(500).json({ success: false, message: 'Error completing order' });
     }
 });
 
@@ -455,11 +488,20 @@ app.get('/api/user/details', authenticateToken, async (req, res) => {
 });
 
 app.delete('/api/user/delete/:userId', authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
+    const { userId } = req.params;
 
     try {
-        await Users.findByIdAndDelete(userId);
-        res.status(200).send('User deleted successfully');
+        if (!req.user.admin) {
+            return res.status(403).json({ error: 'Only admin users can delete accounts.' });
+        }
+
+        const deletedUser = await Users.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ message: 'User deleted successfully' });
     } catch (err) {
         console.error('Error deleting user:', err);
         res.status(500).send('Error deleting user');
@@ -477,7 +519,7 @@ app.get('/api/users', authenticateToken, async (req, res) => {
 });
 
 app.put('/api/user/edit/:userId', authenticateToken, async (req, res) => {
-    const userId = req.user.userId;
+    const { userId } = req.params;
     const { email, admin } = req.body;
 
     try {

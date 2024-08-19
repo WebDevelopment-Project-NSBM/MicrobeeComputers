@@ -42,6 +42,41 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
 
     function performSearch(query) {
         if (!query) {
@@ -80,54 +115,6 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `).join('');
         searchDropdown.classList.remove('hidden');
-    }
-
-    searchButton.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('blur', () => {
-        setTimeout(() => {
-            searchDropdown.classList.add('hidden');
-        }, 150);
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            performSearch(query);
-            searchDropdown.classList.add('hidden');
-        }
-    });
-
-    function showTokenExpireLogOutAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
-        alertDiv.textContent = message;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.classList.add('hidden');
-            document.body.removeChild(alertDiv);
-        }, 3000);
-    }
-
-    function showLogoutMessage(message) {
-        showTokenExpireLogOutAlert(message);
-        setTimeout(() => {
-            window.location.href = '../auth/login.html';
-        }, 1000);
-    }
-
-    function handleTokenExpiration() {
-        localStorage.removeItem('authToken');
-        showLogoutMessage('Your session has expired. Please log in again.');
     }
 
     function fetchUserProfile() {
@@ -514,9 +501,6 @@ document.addEventListener("DOMContentLoaded", function () {
         renderPagination(filteredProducts.length, currentPage);
     }
 
-    editProductForm.addEventListener('submit', handleEditProduct);
-    productCategoryFilter.addEventListener('change', filterProductsByCategory);
-
     fetchAllProducts();
 
     window.deleteProduct = deleteProduct;
@@ -583,10 +567,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    window.addEventListener('load', function () {
-        hideLoadingBar();
-    });
-
     const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
     const sidePanel = document.getElementById('sidePanel');
     const menuToggle = document.getElementById('menuToggle');
@@ -608,6 +588,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     closePanel.addEventListener('click', function () {
         sidePanel.classList.add('-translate-x-full');
+    });
+
+    window.addEventListener('load', function () {
+        hideLoadingBar();
+    });
+
+    editProductForm.addEventListener('submit', handleEditProduct);
+    productCategoryFilter.addEventListener('change', filterProductsByCategory);
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            searchDropdown.classList.add('hidden');
+        }, 150);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+            searchDropdown.classList.add('hidden');
+        }
     });
 });
 

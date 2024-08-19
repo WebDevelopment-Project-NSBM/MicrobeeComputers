@@ -333,6 +333,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         throw new Error('Unauthorized access');
                     }
+                } else if (response.status === 400) {
+                    const data = await response.json();
+                    if (data.message === 'Product is out of stock') {
+                        showCartAlert(data.message, 'error');
+                    }
+                    throw new Error(data.message);
                 } else if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
@@ -340,14 +346,21 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 console.log(`Product ${productId} added to cart`);
-                showCartAlert();
+                showCartAlert('Product added to cart successfully!', 'success');
             })
             .catch(error => {
                 console.error('Error adding product to cart:', error);
             });
     };
 
-    function showCartAlert() {
+    function showCartAlert(message, type = 'success') {
+        cartAlert.classList.remove('bg-green-500', 'bg-red-500');
+        if (type === 'error') {
+            cartAlert.classList.add('bg-red-500');
+        } else {
+            cartAlert.classList.add('bg-green-500');
+        }
+        cartAlert.textContent = message;
         cartAlert.classList.remove('hidden');
         cartAlert.classList.add('show');
         setTimeout(() => {

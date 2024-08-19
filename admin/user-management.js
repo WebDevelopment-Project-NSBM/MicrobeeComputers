@@ -38,6 +38,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
     function performSearch(query) {
         if (!query) {
             console.log('No query provided, hiding dropdown');
@@ -75,49 +106,6 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `).join('');
         searchDropdown.classList.remove('hidden');
-    }
-
-    searchButton.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('blur', () => {
-        setTimeout(() => {
-            searchDropdown.classList.add('hidden');
-        }, 150);
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            performSearch(query);
-            searchDropdown.classList.add('hidden');
-        }
-    });
-
-    function showTokenExpireLogOutAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
-        alertDiv.textContent = message;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.classList.add('hidden');
-            document.body.removeChild(alertDiv);
-        }, 3000);
-    }
-
-    function showLogoutMessage(message) {
-        showTokenExpireLogOutAlert(message);
-        setTimeout(() => {
-            window.location.href = '../auth/login.html';
-        }, 1000);
     }
 
     function handleLogout() {
@@ -243,23 +231,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderUserList() {
         userListContainer.innerHTML = '';
+
         const start = (currentPage - 1) * itemsPerPageUser;
         const end = start + itemsPerPageUser;
         const paginatedUsers = users.slice(start, end);
 
         paginatedUsers.forEach(user => {
             const userHTML = `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
-                        <p class="card-text"><strong>Email:</strong> ${user.email}</p>
-                        <p class="card-text"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
-                        <p class="card-text"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
-                        <button class="btn btn-primary" onclick="editUser('${user._id}')">Edit</button>
-                        <button class="btn btn-danger" onclick="deleteUser('${user._id}')">Delete</button>
-                    </div>
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
+                    <p class="card-text"><strong>Email:</strong> ${user.email}</p>
+                    <p class="card-text"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
+                    <p class="card-text"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                    <button class="btn btn-primary" onclick="editUser('${user._id}')">Edit</button>
+                    <button class="btn btn-danger" onclick="deleteUser('${user._id}')">Delete</button>
                 </div>
-            `;
+            </div>
+        `;
             userListContainer.insertAdjacentHTML('beforeend', userHTML);
         });
     }
@@ -333,7 +322,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 showAlert(`User ${userId} deleted successfully`);
                 fetchAllUsers();
             } else {
-                throw new Error('Error deleting user');
+                const result = await response.json();
+                throw new Error(result.message || 'Error deleting user');
             }
         } catch (error) {
             showAlert('Error: ' + error.message);
@@ -461,15 +451,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    logoutButton.addEventListener('click', handleLogout);
-    document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
-    document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
-
     fetchUserProfile();
     fetchAllUsers();
-
-    window.deleteUser = deleteUser;
-    window.editUser = editUser;
 
     if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
@@ -603,6 +586,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     closePanel.addEventListener('click', function () {
         sidePanel.classList.add('-translate-x-full');
+    });
+
+    window.deleteUser = deleteUser;
+    window.editUser = editUser;
+
+    logoutButton.addEventListener('click', handleLogout);
+    document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+    document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            searchDropdown.classList.add('hidden');
+        }, 150);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+            searchDropdown.classList.add('hidden');
+        }
     });
 });
 

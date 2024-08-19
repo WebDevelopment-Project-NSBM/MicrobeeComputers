@@ -38,6 +38,42 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
+
     function performUserIdSearch(userId) {
         if (!userId) {
             console.log('No User ID provided, returning full list.');
@@ -59,34 +95,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         usersToRender.forEach(user => {
             const userHTML = `
-            <div class="card mb-3 mx-auto max-w-md w-full">
-                <div class="card-body">
-                    <h5 class="text-center text-xl font-bold mb-4">${user.email}</h5>
-                    <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
-                    <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
-                    <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
-                    ${user.orderStatus === 1 ? `
-                    <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Order pending</p>
-                    <button class="btn btn-primary" onclick="viewUserCart(${user.userId})">View Cart</button>
-                    ` : ''}
-                </div>
+        <div class="card mb-3 mx-auto max-w-md w-full">
+            <div class="card-body">
+                <h5 class="text-center text-xl font-bold mb-4">${user.email}</h5>
+                <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
+                <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
+                <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                ${user.orderStatus === 1 ? `
+                <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Order pending</p>
+                <button class="btn btn-primary mr-2" onclick="viewUserCart(${user.userId})">View Cart</button>
+                <button class="btn btn-success" onclick="completeOrder(${user.userId})">Complete Order</button>
+                ` : ''}
             </div>
-        `;
+        </div>
+    `;
             userListContainer.insertAdjacentHTML('beforeend', userHTML);
         });
     }
-
-    searchUserButton.addEventListener('click', () => {
-        const userId = searchUserIdInput.value.trim();
-        performUserIdSearch(userId);
-    });
-
-    searchUserIdInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const userId = searchUserIdInput.value.trim();
-            performUserIdSearch(userId);
-        }
-    });
 
     function performSearch(query) {
         if (!query) {
@@ -127,49 +152,6 @@ document.addEventListener("DOMContentLoaded", function () {
         searchDropdown.classList.remove('hidden');
     }
 
-    searchButton.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('blur', () => {
-        setTimeout(() => {
-            searchDropdown.classList.add('hidden');
-        }, 150);
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            performSearch(query);
-            searchDropdown.classList.add('hidden');
-        }
-    });
-
-    function showTokenExpireLogOutAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
-        alertDiv.textContent = message;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.classList.add('hidden');
-            document.body.removeChild(alertDiv);
-        }, 3000);
-    }
-
-    function showLogoutMessage(message) {
-        showTokenExpireLogOutAlert(message);
-        setTimeout(() => {
-            window.location.href = '../auth/login.html';
-        }, 1000);
-    }
-
     function handleLogout() {
         fetch(`http://localhost:3000/api/logout`, {
             method: 'POST',
@@ -190,11 +172,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => {
                 console.error('Error during logout:', error);
             });
-    }
-
-    function handleTokenExpiration() {
-        localStorage.removeItem('authToken');
-        showLogoutMessage('Your session has expired. Please log in again.');
     }
 
     function fetchUserProfile() {
@@ -285,8 +262,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                users = data.filter(user => user.orderStatus === 1);
-                renderUserList();
+                users = data.filter(user => user.orderStatus === 1) || [];
+                renderUserList(users);
                 renderPagination(users.length, currentPage);
             })
             .catch(error => {
@@ -295,29 +272,55 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    function renderUserList() {
+    function renderUserList(usersToRender = []) {
         userListContainer.innerHTML = '';
-        const start = (currentPage - 1) * itemsPerPageUser;
-        const end = start + itemsPerPageUser;
-        const paginatedUsers = users.slice(start, end);
 
-        paginatedUsers.forEach(user => {
+        if (usersToRender.length === 0) {
+            userListContainer.innerHTML = "<p class='px-4 py-2 text-gray-500'>No Pending Orders found.</p>";
+            return;
+        }
+
+        usersToRender.forEach(user => {
             const userHTML = `
-                <div class="card mb-3 mx-auto max-w-md w-full">
-                    <div class="card-body">
-                        <h5 class="text-center text-xl font-bold mb-4">${user.email}</h5>
-                        <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
-                        <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
-                        <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
-                        ${user.orderStatus === 1 ? `
-                        <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Order pending</p>
-                        <button class="btn btn-primary" onclick="viewUserCart(${user.userId})">View Cart</button>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
+        <div class="card mb-3 mx-auto max-w-md w-full">
+            <div class="card-body">
+                <h5 class="text-center text-xl font-bold mb-4">${user.email}</h5>
+                <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
+                <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
+                <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                ${user.orderStatus === 1 ? `
+                <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Order pending</p>
+                <button class="btn btn-primary mr-2" onclick="viewUserCart(${user.userId})">View Cart</button>
+                <button class="btn btn-danger mr-2" onclick="completeOrder(${user.userId})">Complete Order</button>
+                ` : ''}
+            </div>
+        </div>
+    `;
             userListContainer.insertAdjacentHTML('beforeend', userHTML);
         });
+    }
+
+    function completeOrder(userId) {
+        fetch(`http://localhost:3000/api/order/complete/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Order completed successfully!');
+                    renderUserList();
+                } else {
+                    showAlert('Error completing order: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error completing order:', error);
+                showAlert('An error occurred while completing the order.');
+            });
     }
 
     function viewUserCart(userId) {
@@ -375,14 +378,6 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.classList.add('custom-hidden');
     }
 
-    document.getElementById('closeCustomModal').addEventListener('click', closeModal);
-
-    window.addEventListener('click', function (event) {
-        const modal = document.getElementById('cartCustomModal');
-        if (event.target === modal) {
-            modal.classList.add('custom-hidden');
-        }
-    });
 
     function renderPagination(totalItems, currentPage) {
         const container = userPaginationContainer;
@@ -424,8 +419,6 @@ document.addEventListener("DOMContentLoaded", function () {
     logoutButton.addEventListener('click', handleLogout);
     fetchUserProfile();
     fetchAllUsers();
-
-    window.viewUserCart = viewUserCart;
 
     if (authToken) {
         document.querySelectorAll('.auth a[href*="login"], .auth a[href*="register"]').forEach(button => {
@@ -477,6 +470,34 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('admin-profile-dropdown').style.display = 'none';
     }
 
+    function initializeSidePanel() {
+        const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
+        const sidePanel = document.getElementById('sidePanel');
+        const menuToggle = document.getElementById('menuToggle');
+        const closePanel = document.getElementById('closePanel');
+        const categoryList = document.getElementById('categoryList');
+
+        sidePanel.style.overflowY = 'auto';
+
+        categoryList.innerHTML = '';
+
+        categories.forEach(category => {
+            const li = document.createElement('li');
+            li.className = "side-panel-li";
+            li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+            categoryList.appendChild(li);
+        });
+
+        menuToggle.addEventListener('click', function () {
+            sidePanel.classList.remove('-translate-x-full');
+        });
+
+        closePanel.addEventListener('click', function () {
+            sidePanel.classList.add('-translate-x-full');
+        });
+    }
+
+    initializeSidePanel();
     attachButtonPrimaryResetHandlers();
     attachButtonDangerResetHandlers();
 
@@ -538,34 +559,53 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    initializeSidePanel();
+    window.viewUserCart = viewUserCart;
+    window.completeOrder = completeOrder;
 
-    function initializeSidePanel() {
-        const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
-        const sidePanel = document.getElementById('sidePanel');
-        const menuToggle = document.getElementById('menuToggle');
-        const closePanel = document.getElementById('closePanel');
-        const categoryList = document.getElementById('categoryList');
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
 
-        sidePanel.style.overflowY = 'auto';
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
 
-        categoryList.innerHTML = '';
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            searchDropdown.classList.add('hidden');
+        }, 150);
+    });
 
-        categories.forEach(category => {
-            const li = document.createElement('li');
-            li.className = "side-panel-li";
-            li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
-            categoryList.appendChild(li);
-        });
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+            searchDropdown.classList.add('hidden');
+        }
+    });
 
-        menuToggle.addEventListener('click', function () {
-            sidePanel.classList.remove('-translate-x-full');
-        });
+    document.getElementById('closeCustomModal').addEventListener('click', closeModal);
 
-        closePanel.addEventListener('click', function () {
-            sidePanel.classList.add('-translate-x-full');
-        });
-    }
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('cartCustomModal');
+        if (event.target === modal) {
+            modal.classList.add('custom-hidden');
+        }
+    });
+
+    searchUserButton.addEventListener('click', () => {
+        const userId = searchUserIdInput.value.trim();
+        performUserIdSearch(userId);
+    });
+
+    searchUserIdInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const userId = searchUserIdInput.value.trim();
+            performUserIdSearch(userId);
+        }
+    });
 });
 
 function redirectToProductPage(productId) {

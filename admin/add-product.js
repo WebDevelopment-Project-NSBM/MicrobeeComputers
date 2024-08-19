@@ -33,6 +33,52 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showTokenExpireLogOutAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
+    function showLogoutMessage(message) {
+        showTokenExpireLogOutAlert(message);
+        setTimeout(() => {
+            window.location.href = '../auth/login.html';
+        }, 1000);
+    }
+
+    function handleTokenExpiration() {
+        localStorage.removeItem('authToken');
+        showLogoutMessage('Your session has expired. Please log in again.');
+    }
+
+    function showProductAddedAlert() {
+        console.log("Showing product added alert");
+        if (productAddedAlert) {
+            productAddedAlert.classList.remove('hidden');
+            setTimeout(() => {
+                productAddedAlert.classList.add('hidden');
+            }, 3000);
+        }
+    }
+
     function performSearch(query) {
         if (!query) {
             console.log('No query provided, hiding dropdown');
@@ -70,59 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `).join('');
         searchDropdown.classList.remove('hidden');
-    }
-
-    searchButton.addEventListener('click', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        performSearch(query);
-    });
-
-    searchInput.addEventListener('blur', () => {
-        setTimeout(() => {
-            searchDropdown.classList.add('hidden');
-        }, 150);
-    });
-
-    searchInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            const query = searchInput.value.trim();
-            performSearch(query);
-            searchDropdown.classList.add('hidden');
-        }
-    });
-
-    function showTokenExpireLogOutAlert(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
-        alertDiv.textContent = message;
-        document.body.appendChild(alertDiv);
-
-        setTimeout(() => {
-            alertDiv.classList.add('hidden');
-            document.body.removeChild(alertDiv);
-        }, 3000);
-    }
-
-    function showLogoutMessage(message) {
-        showTokenExpireLogOutAlert(message);
-        setTimeout(() => {
-            window.location.href = '../auth/login.html';
-        }, 1000);
-    }
-
-    function showProductAddedAlert() {
-        console.log("Showing product added alert");
-        if (productAddedAlert) {
-            productAddedAlert.classList.remove('hidden');
-            setTimeout(() => {
-                productAddedAlert.classList.add('hidden');
-            }, 3000);
-        }
     }
 
     async function handleAddProduct(event) {
@@ -181,42 +174,6 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             showAlert('Error adding product: ' + result.message);
         }
-    }
-
-    addProductForm.addEventListener('submit', handleAddProduct);
-
-    function attachButtonPrimaryResetHandlers() {
-        document.querySelectorAll('.btn-primary').forEach(button => {
-            button.addEventListener('mousedown', function () {
-                this.style.backgroundColor = '#A0A0A0';
-                this.style.color = '#000000';
-            });
-            button.addEventListener('mouseup', function () {
-                this.style.backgroundColor = '#FFCC48';
-                this.style.color = '#000000';
-            });
-            button.addEventListener('mouseleave', function () {
-                this.style.backgroundColor = '#FFCC48';
-                this.style.color = '#000000';
-            });
-            button.addEventListener('mouseover', function () {
-                if (!this.classList.contains('active')) {
-                    this.style.backgroundColor = '#A0A0A0';
-                    this.style.color = '#000000';
-                }
-            });
-            button.addEventListener('mouseout', function () {
-                if (!this.classList.contains('active')) {
-                    this.style.backgroundColor = '#FFCC48';
-                    this.style.color = '#000000';
-                }
-            });
-        });
-    }
-
-    function handleTokenExpiration() {
-        localStorage.removeItem('authToken');
-        showLogoutMessage('Your session has expired. Please log in again.');
     }
 
     function fetchUserProfile() {
@@ -337,12 +294,6 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('admin-profile-dropdown').style.display = 'none';
     }
 
-    attachButtonPrimaryResetHandlers();
-
-    window.addEventListener('load', function () {
-        hideLoadingBar();
-    });
-
     const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
     const sidePanel = document.getElementById('sidePanel');
     const menuToggle = document.getElementById('menuToggle');
@@ -366,6 +317,66 @@ document.addEventListener("DOMContentLoaded", function () {
         sidePanel.classList.add('-translate-x-full');
     });
 
+    attachButtonPrimaryResetHandlers();
+
+    window.addEventListener('load', function () {
+        hideLoadingBar();
+    });
+
+    addProductForm.addEventListener('submit', handleAddProduct);
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            searchDropdown.classList.add('hidden');
+        }, 150);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+            searchDropdown.classList.add('hidden');
+        }
+    });
+
+    function attachButtonPrimaryResetHandlers() {
+        document.querySelectorAll('.btn-primary').forEach(button => {
+            button.addEventListener('mousedown', function () {
+                this.style.backgroundColor = '#A0A0A0';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseup', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseleave', function () {
+                this.style.backgroundColor = '#FFCC48';
+                this.style.color = '#000000';
+            });
+            button.addEventListener('mouseover', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#A0A0A0';
+                    this.style.color = '#000000';
+                }
+            });
+            button.addEventListener('mouseout', function () {
+                if (!this.classList.contains('active')) {
+                    this.style.backgroundColor = '#FFCC48';
+                    this.style.color = '#000000';
+                }
+            });
+        });
+    }
 });
 
 function redirectToProductPage(productId) {

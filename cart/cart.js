@@ -35,6 +35,18 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function showAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2';
+        alertDiv.textContent = message;
+        document.body.appendChild(alertDiv);
+
+        setTimeout(() => {
+            alertDiv.classList.add('hidden');
+            document.body.removeChild(alertDiv);
+        }, 3000);
+    }
+
     function performSearch(query) {
         if (!query) {
             console.log('No query provided, hiding dropdown');
