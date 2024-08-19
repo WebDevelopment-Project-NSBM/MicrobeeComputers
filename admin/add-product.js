@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const adminContent = document.getElementById('adminContent');
     const userProfileContainer = document.getElementById('userProfileContainer');
     const productAddedAlert = document.getElementById('productAdded');
+    const searchInput = document.querySelector('.ser-col');
+    const searchButton = document.querySelector('.fa-search');
+    const searchDropdown = document.getElementById('searchDropdown');
 
     if (!authToken) {
         window.location.href = '../auth/login.html';
@@ -29,6 +32,69 @@ document.addEventListener("DOMContentLoaded", function () {
             }, 100);
         }
     }
+
+    function performSearch(query) {
+        if (!query) {
+            console.log('No query provided, hiding dropdown');
+            searchDropdown.classList.add('hidden');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/search?query=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    searchDropdown.innerHTML = "<p class='px-4 py-2 text-gray-500'>No products found.</p>";
+                } else {
+                    renderSearchDropdown(data);
+                }
+                searchDropdown.classList.remove('hidden');
+                console.log('Dropdown populated and displayed');
+            })
+            .catch(error => {
+                console.error('Error during search:', error);
+                searchDropdown.classList.add('hidden');
+            });
+    }
+
+    function renderSearchDropdown(products) {
+        searchDropdown.innerHTML = products.slice(0, 50).map(product => `
+            <div class="px-4 py-2 cursor-pointer hover:bg-gray-100" onclick="redirectToProductPage(${product.pro_id})">
+                <p class="text-black font-semibold">${product.name}</p>
+                <p class="text-gray-500">Rs: ${product.price.toLocaleString()}</p>
+            </div>
+        `).join('');
+        searchDropdown.classList.remove('hidden');
+    }
+
+    searchButton.addEventListener('click', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        performSearch(query);
+    });
+
+    searchInput.addEventListener('blur', () => {
+        setTimeout(() => {
+            searchDropdown.classList.add('hidden');
+        }, 150);
+    });
+
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const query = searchInput.value.trim();
+            performSearch(query);
+            searchDropdown.classList.add('hidden');
+        }
+    });
 
     function showTokenExpireLogOutAlert(message) {
         const alertDiv = document.createElement('div');
@@ -276,4 +342,32 @@ document.addEventListener("DOMContentLoaded", function () {
     window.addEventListener('load', function () {
         hideLoadingBar();
     });
+
+    const categories = ['casing', 'coolers', 'cpu', 'gpu', 'monitor', 'motherboards', 'powersupply', 'ram', 'storage', 'ups'];
+    const sidePanel = document.getElementById('sidePanel');
+    const menuToggle = document.getElementById('menuToggle');
+    const closePanel = document.getElementById('closePanel');
+    const categoryList = document.getElementById('categoryList');
+
+    sidePanel.style.overflowY = 'auto';
+
+    categories.forEach(category => {
+        const li = document.createElement('li');
+        li.className = "side-panel-li";
+        li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+        categoryList.appendChild(li);
+    });
+
+    menuToggle.addEventListener('click', function () {
+        sidePanel.classList.remove('-translate-x-full');
+    });
+
+    closePanel.addEventListener('click', function () {
+        sidePanel.classList.add('-translate-x-full');
+    });
+
 });
+
+function redirectToProductPage(productId) {
+    window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
+}

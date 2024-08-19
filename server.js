@@ -57,6 +57,25 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+
+app.get('/api/search', async (req, res) => {
+    const query = req.query.query;
+    if (!query) {
+        return res.status(400).json({ success: false, message: 'Query is required' });
+    }
+
+    try {
+        const products = await Products.find({
+            name: { $regex: query, $options: 'i' } // case-insensitive search
+        });
+
+        res.status(200).json(products);
+    } catch (err) {
+        console.error('Error fetching search results:', err);
+        res.status(500).json({ success: false, message: 'Error fetching search results' });
+    }
+});
+
 app.post('/api/contactus', async (req, res) => {
     const { name, email, message } = req.body;
     try {

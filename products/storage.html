@@ -31,11 +31,15 @@
                     <img src="../logo/MicroBee Comupters.png" alt="MicroBee Computers" class="logo-img">
                 </div>
                 <div class="search-bar flex items-center w-full md:w-auto mx-4">
-                    <div class="menu-bar mr-4 cursor-pointer">
+                    <div class="menu-bar mr-4 cursor-pointer" role="button" aria-label="Toggle Menu">
                         <i id="menuToggle" class="fas fa-bars text-2xl menu-bar-icon"></i>
                     </div>
-                    <input type="text" placeholder="Search" class="ser-col w-full md:w-auto" />
-                    <i class="fas fa-search ml-2"></i>
+                    <input type="text" placeholder="Search" class="ser-col w-full md:w-auto" aria-label="Search" />
+                    <i class="fas fa-search ml-2" role="button" aria-label="Search"></i>
+
+                    <div id="searchDropdown"
+                        class="absolute bg-white border border-gray-300 w-full mt-1 rounded-md shadow-lg max-h-60 overflow-y-auto hidden search-dropdown">
+                    </div>
                 </div>
                 <div class="auth flex items-center space-x-2">
                     <a href="../home.html" class="btn btn-home mr-2">Home</a>

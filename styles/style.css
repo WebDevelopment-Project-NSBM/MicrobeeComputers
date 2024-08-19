@@ -27,6 +27,69 @@ main {
     margin-bottom: 30px;
 }
 
+.search-bar {
+    position: relative;
+    background-color: white;
+    border: 2px solid #FFCC48;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.search-bar input {
+    background-color: white;
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    color: #000;
+}
+
+.search-bar input:focus {
+    outline: none;
+}
+
+.search-bar i {
+    color: gray;
+    width: 1rem;
+    height: 1rem;
+    opacity: 0.7;
+}
+
+.search-dropdown {
+    z-index: 1000;
+    max-height: 240px;
+    overflow-y: auto;
+    width: calc(100% - 1rem);
+    background-color: white;
+    border: 1px solid #FFCC48;
+    border-radius: 0.5rem;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-dropdown div {
+    padding: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #000;
+}
+
+.search-dropdown div:hover {
+    background-color: #f1f1f1;
+}
+
+.search-dropdown div:active,
+.search-dropdown div:focus {
+    background-color: #A0A0A0;
+    color: #FFF;
+}
+
 .side-panel {
     background-color: #FFCC48;
     color: #000000;
