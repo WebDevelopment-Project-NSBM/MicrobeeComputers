@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         adminContent.innerHTML = `
                             <div class="container mx-auto text-center mt-5">
                                 <h1 class="text-3xl font-bold mb-4">You are not an admin user</h1>
-                                <a href="../structures/home.html" class="btn btn-primary">Home</a>
+                                <a href="../home.html" class="btn btn-primary">Home</a>
                             </div>
                         `;
                         return;
