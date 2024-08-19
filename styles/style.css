@@ -27,6 +27,54 @@ main {
     margin-bottom: 30px;
 }
 
+.viewContactUsModal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 60px;
+}
+
+.viewContactUsModal-content {
+    background-color: #FFFFFF;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #FFCC48;
+    width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    color: #000000;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.viewContactUsModal-close {
+    color: #000000;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.viewContactUsModal-close:hover,
+.viewContactUsModal-close:focus {
+    color: #A0A0A0;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.custom-hidden {
+    display: none;
+}
+
+.viewContactUsModal-content p {
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
 .custom-modal {
     position: fixed;
     z-index: 1000;
@@ -36,7 +84,6 @@ main {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Black with 50% opacity */
     padding-top: 60px;
 }
 

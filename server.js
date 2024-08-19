@@ -79,7 +79,10 @@ app.get('/api/search', async (req, res) => {
 app.post('/api/contactus', async (req, res) => {
     const { name, email, message } = req.body;
     try {
+        const lastContact = await ContactUs.findOne().sort({ cId: -1 });
+        const newCId = lastContact ? lastContact.cId + 1 : 1;
         const newContact = new ContactUs({
+            cId: newCId,
             name,
             email,
             message,
@@ -90,6 +93,31 @@ app.post('/api/contactus', async (req, res) => {
     } catch (err) {
         console.error('Error saving contact message:', err);
         res.status(500).json({ success: false, message: 'Error saving message' });
+    }
+});
+
+app.get('/api/contactus', authenticateToken, async (req, res) => {
+    try {
+        const contacts = await ContactUs.find();
+        res.status(200).json(contacts);
+    } catch (err) {
+        console.error('Error fetching contact messages:', err);
+        res.status(500).json({ success: false, message: 'Error fetching contact messages' });
+    }
+});
+
+app.delete('/api/contactus/:cId', authenticateToken, async (req, res) => {
+    const { cId } = req.params;
+
+    try {
+        const contact = await ContactUs.findOneAndDelete({ cId: parseInt(cId) });
+        if (!contact) {
+            return res.status(404).json({ success: false, message: 'Contact message not found' });
+        }
+        res.status(200).json({ success: true, message: 'Message deleted successfully' });
+    } catch (err) {
+        console.error('Error deleting contact message:', err);
+        res.status(500).json({ success: false, message: 'Error deleting message' });
     }
 });
 
