@@ -10,10 +10,12 @@ const cartItem = new Schema({
 });
 
 const userSchema = new Schema({
+    userId: { type: Number, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     admin: { type: Boolean, required: false, default: false },
     cartItems: [cartItem],
+    orderStatus: { type: Number, default: 0, required: false },
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -66,7 +66,7 @@ app.get('/api/search', async (req, res) => {
 
     try {
         const products = await Products.find({
-            name: { $regex: query, $options: 'i' } // case-insensitive search
+            name: { $regex: query, $options: 'i' }
         });
 
         res.status(200).json(products);
@@ -337,6 +337,47 @@ app.put('/api/cart/update/:pro_id', authenticateToken, async (req, res) => {
     }
 });
 
+app.get('/api/orderCart/items/:userId', authenticateToken, async (req, res) => {
+    // Check if the requesting user is an admin
+    if (!req.user.admin) {
+        return res.status(403).json({ success: false, message: 'Access forbidden: Admins only' });
+    }
+
+    const { userId } = req.params;
+
+    try {
+        const user = await Users.findOne({ userId: userId });
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.status(200).json(user.cartItems);
+    } catch (err) {
+        console.error('Error fetching cart items for user:', err);
+        res.status(500).json({ success: false, message: 'Error fetching cart items' });
+    }
+});
+
+app.post('/api/cart/checkout', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+
+    try {
+        const user = await Users.findById(userId);
+
+        if (!user || user.cartItems.length === 0) {
+            return res.status(400).json({ success: false, message: 'Your cart is empty.' });
+        }
+
+        user.orderStatus = 1;
+        await user.save();
+
+        res.status(200).json({ success: true, userId: user.userId });
+    } catch (error) {
+        console.error('Error during checkout:', error);
+        res.status(500).json({ success: false, message: 'Error during checkout.' });
+    }
+});
+
 app.post('/api/register', async (req, res) => {
     const { email, password, admin } = req.body;
 
@@ -348,11 +389,14 @@ app.post('/api/register', async (req, res) => {
         const existingUser = await Users.findOne({ email: email.toLowerCase() });
         if (existingUser) {
             return res.status(400).json({ success: false, message: 'User already exists' });
-        } else {
-            const newUser = new Users({ email: email.toLowerCase(), password, admin });
-            await newUser.save();
-            res.status(201).json({ success: true, message: 'User registered successfully' });
         }
+
+        const lastUser = await Users.findOne().sort({ userId: -1 });
+        const userId = lastUser ? lastUser.userId + 1 : 1;
+
+        const newUser = new Users({ userId, email: email.toLowerCase(), password, admin });
+        await newUser.save();
+        res.status(201).json({ success: true, message: 'User registered successfully' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'Error during registration' });
     }

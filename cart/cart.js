@@ -357,6 +357,104 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     };
 
+    function handleCheckout() {
+        if (!authToken) {
+            showAlert('Please log in to proceed with checkout.');
+            return;
+        }
+
+        fetch(`http://localhost:3000/api/user/details`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${authToken}`
+            }
+        })
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                        return;
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.orderStatus === 1) {
+                    displayOrderConfirmation(data.userId);
+                } else {
+                    processCheckout();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
+    }
+
+    function displayOrderConfirmation(userId) {
+        cartItemsContainer.innerHTML = `
+        <div class="card mb-3 mx-auto max-w-md">
+                <div class="card-body">
+                    <h5 class="text-center text-xl font-bold mb-4">Order Information</h5>
+                    <p class="card-text mb-4"><strong>Your Order ID:</strong> ${userId}</p>
+                    <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Your order is pending. Please complete your purchase by contacting us.</p>
+                    <p class="card-text mb-2"><strong>Email:</strong> <a href="mailto:sales@microbeecomputers.lk" class="text-blue-600">sales@microbeecomputers.lk</a></p>
+                    <p class="card-text mb-2"><strong>Address:</strong></p>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li>Dehiwala Showroom: 110A, Galle Road, Dehiwala.</li>
+                        <li>Colombo 3 Showroom: 37, School Lane (Facing Duplication Road), Colombo 03.</li>
+                    </ul>
+                    <p class="card-text"><strong>Phone:</strong> <a href="tel:07777292272" class="text-blue-600">07777 292 272</a></p>
+                    <button class="btn btn-home btn-block text-white mt-4" onclick="window.location.href = '../home.html'">Continue Shopping</button>
+                </div>
+            </div>
+    `;
+    }
+
+    function processCheckout() {
+        fetch(`http://localhost:3000/api/cart/checkout`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authToken}`
+            },
+        })
+            .then(async response => {
+                if (response.status === 401 || response.status === 403) {
+                    const data = await response.json();
+                    if (data.error === 'TokenExpired' || response.status === 403) {
+                        handleTokenExpiration();
+                        return;
+                    } else {
+                        throw new Error('Unauthorized access');
+                    }
+                } else if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    displayOrderConfirmation(data.userId);
+                } else {
+                    showAlert('There was an issue processing your order. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error during checkout:', error);
+            });
+    }
+
+    window.addEventListener('click', function (event) {
+        if (event.target.matches('.btn-home')) {
+            handleCheckout();
+        }
+    });
+
     const loginButton = document.querySelector('.auth a[href*="login"]');
     const registerButton = document.querySelector('.auth a[href*="register"]');
     const userProfileDropdown = document.getElementById('user-profile-dropdown');

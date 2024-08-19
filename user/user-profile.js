@@ -157,17 +157,39 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderUserProfile(user) {
-        const userHTML = `
+        let orderInfoCardHTML = '';
+
+        if (user.orderStatus === 1) {
+            orderInfoCardHTML = `
             <div class="card mb-3 mx-auto max-w-md">
                 <div class="card-body">
-                    <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
-                    <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
-                    <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
-                    <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+                    <h5 class="text-center text-xl font-bold mb-4">Order Information</h5>
+                    <p class="card-text mb-4"><strong>Your Order ID:</strong> ${user.userId}</p>
+                    <p class="card-text mb-4 text-yellow-600"><strong>Status:</strong> Your order is pending. Please complete your purchase by contacting us.</p>
+                    <p class="card-text mb-2"><strong>Email:</strong> <a href="mailto:sales@microbeecomputers.lk" class="text-blue-600">sales@microbeecomputers.lk</a></p>
+                    <p class="card-text mb-2"><strong>Address:</strong></p>
+                    <ul class="list-disc pl-5 mb-4">
+                        <li>Dehiwala Showroom: 110A, Galle Road, Dehiwala.</li>
+                        <li>Colombo 3 Showroom: 37, School Lane (Facing Duplication Road), Colombo 03.</li>
+                    </ul>
+                    <p class="card-text"><strong>Phone:</strong> <a href="tel:07777292272" class="text-blue-600">07777 292 272</a></p>
                 </div>
             </div>
         `;
-        userProfileContainer.innerHTML = userHTML;
+        }
+
+        const userProfileCardHTML = `
+        <div class="card mb-3 mx-auto max-w-md">
+            <div class="card-body">
+                <h5 class="text-center text-2xl font-bold mb-6">${user.email || 'User Profile'}</h5>
+                <p class="card-text mb-4"><strong>Email:</strong> ${user.email}</p>
+                <p class="card-text mb-4"><strong>Admin:</strong> ${user.admin ? 'Yes' : 'No'}</p>
+                <p class="card-text mb-4"><strong>Member since:</strong> ${new Date(user.createdAt).toLocaleDateString()}</p>
+            </div>
+        </div>
+    `;
+
+        userProfileContainer.innerHTML = userProfileCardHTML + orderInfoCardHTML;
     }
 
     function showLogoutMessage(message) {
