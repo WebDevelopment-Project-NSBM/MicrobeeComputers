@@ -45,7 +45,7 @@ function authenticateToken(req, res, next) {
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         const category = req.body.category;
-        const uploadPath = path.join(__dirname, `./products_images/${category}`);
+        const uploadPath = path.join('/var/www/microbeecomputers.lk/products_images', category);
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
@@ -55,6 +55,7 @@ const storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 });
+
 const upload = multer({ storage });
 
 
@@ -186,7 +187,7 @@ app.post('/api/products/add', upload.single('image'), authenticateToken, async (
 
         let imageUrl = '';
         if (req.file) {
-            imageUrl = `./products_images/${category}/${req.file.filename}`;
+            imageUrl = `../products_images/${category}/${req.file.filename}`;
         }
 
         const newProduct = new Products({
@@ -227,7 +228,7 @@ app.put('/api/products/edit/:id', upload.single('image'), authenticateToken, asy
     try {
         let imageUrl = '';
         if (req.file) {
-            imageUrl = `./products_images/${category}/${req.file.filename}`;
+            imageUrl = `../products_images/${category}/${req.file.filename}`;
         }
 
         const updateFields = {
