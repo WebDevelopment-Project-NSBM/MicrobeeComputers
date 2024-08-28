@@ -434,6 +434,7 @@ main {
 
 .product-item {
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .product-item .card-title {
