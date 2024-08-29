@@ -75,9 +75,8 @@
         </div>
     </header>
     <?php
-    echo "testing"
+    // This is a PHP file
     ?>
-
     <nav class="bg-gray-800 text-white py-2">
         <div class="container mx-auto">
             <a href="#" class="text-white">Home</a>
