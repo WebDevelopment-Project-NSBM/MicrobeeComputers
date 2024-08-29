@@ -20,11 +20,11 @@
     <header class="relative w-full">
         <div class="bg-yellow-500 py-2 hidden md:block">
             <div class="container-fluid mx-auto flex justify-center md:justify-center space-x-4">
-                <a class="link link-secondary text-black" href="../products/coolers.html">Coolers</a>
-                <a class="link link-secondary text-black" href="../products/motherboards.html">MotherBoards</a>
-                <a class="link link-secondary text-black" href="../products/powersupply.html">PowerSupplys</a>
-                <a class="link link-secondary text-black" href="../products/casing.html">Casings</a>
-                <a class="link link-secondary text-black" href="../products/storage.html">Storages</a>
+                <a class="link link-secondary text-black" href="../products/coolers.php">Coolers</a>
+                <a class="link link-secondary text-black" href="../products/motherboards.php">MotherBoards</a>
+                <a class="link link-secondary text-black" href="../products/powersupply.php">PowerSupplys</a>
+                <a class="link link-secondary text-black" href="../products/casing.php">Casings</a>
+                <a class="link link-secondary text-black" href="../products/storage.php">Storages</a>
             </div>
         </div>
         <div class="container-fluid mx-auto flex flex-wrap justify-center items-center mt-4 md:mt-0">
@@ -44,18 +44,18 @@
                     </div>
                 </div>
                 <div class="auth flex items-center space-x-2">
-                    <a href="../home.html" class="btn btn-home mr-2">Home</a>
-                    <a href="../admin/user-management.html" class="btn btn-home mr-2">Users</a>
-                    <a href="../admin/order-panel.html" class="btn btn-home mr-2">Orders</a>
-                    <a href="../admin/product-management.html" class="btn btn-home mr-2">Products</a>
-                    <a href="../admin/contactusview.html" class="btn btn-home mr-2">ContactUs</a>
-                    <a href="../auth/login.html" class="btn btn-home mr-2">
+                    <a href="../home.php" class="btn btn-home mr-2">Home</a>
+                    <a href="../admin/user-management.php" class="btn btn-home mr-2">Users</a>
+                    <a href="../admin/order-panel.php" class="btn btn-home mr-2">Orders</a>
+                    <a href="../admin/product-management.php" class="btn btn-home mr-2">Products</a>
+                    <a href="../admin/contactusview.php" class="btn btn-home mr-2">ContactUs</a>
+                    <a href="../auth/login.php" class="btn btn-home mr-2">
                         <i class="fas fa-sign-in-alt mr-1"></i> Log In
                     </a>
-                    <a href="../auth/register.html" class="btn btn-home mr-2">
+                    <a href="../auth/register.php" class="btn btn-home mr-2">
                         <i class="fas fa-user-plus mr-1"></i> Register
                     </a>
-                    <a href="../user/cart.html" class="btn btn-cart btn-warning mr-2">
+                    <a href="../user/cart.php" class="btn btn-cart btn-warning mr-2">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                     <div class="dropdown relative">
@@ -68,9 +68,9 @@
                         <ul tabindex="0"
                             class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute">
                             <li id="user-profile-dropdown" style="display: none;"><a
-                                    href="../user/user-profile.html">Profile</a></li>
+                                    href="../user/user-profile.php">Profile</a></li>
                             <li id="admin-profile-dropdown" style="display: none;"><a
-                                    href="../admin/user-management.html">Admin Profile</a></li>
+                                    href="../admin/user-management.php">Admin Profile</a></li>
                             <li><a id="logoutButton" href="#">Logout</a></li>
                         </ul>
                     </div>

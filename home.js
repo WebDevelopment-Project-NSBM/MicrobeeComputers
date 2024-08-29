@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch(`http://localhost:3000/api/search?query=${encodeURIComponent(query)}`)
+        fetch(`https://microbeecomputers.lk/api/search?query=${encodeURIComponent(query)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function showLogoutMessage(message) {
         showTokenExpireLogOutAlert(message);
         setTimeout(() => {
-            window.location.href = '../auth/login.html';
+            window.location.href = '../auth/login.php';
         }, 1000);
     }
 
@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const avatar = document.querySelector('.avatar.placeholder');
 
     function handleLogout() {
-        fetch(`http://localhost:3000/api/logout`, {
+        fetch(`https://microbeecomputers.lk/api/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     localStorage.removeItem('authToken');
                     showLogoutAlert();
                     setTimeout(() => {
-                        window.location.href = '../auth/login.html';
+                        window.location.href = '../auth/login.php';
                     }, 3000);
                 } else {
                     console.error('Error logging out:', data.message);
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchProducts(category, sortBy = 'latest') {
         showLoading();
-        fetch(`http://localhost:3000/api/products?category=${category}&sortBy=${sortBy}`)
+        fetch(`https://microbeecomputers.lk/api/products?category=${category}&sortBy=${sortBy}`)
             .then(response => response.json())
             .then(data => {
                 renderProductCarousel(category, data);
@@ -306,7 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
     categories.forEach(category => {
         const li = document.createElement('li');
         li.className = "side-panel-li";
-        li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+        li.innerHTML = `<a href="../products/${category}.php" class="side-panel-a">${category}</a>`;
         categoryList.appendChild(li);
     });
 
@@ -329,7 +329,7 @@ document.addEventListener("DOMContentLoaded", function () {
         categorySection.innerHTML = `
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-semibold capitalize text-left">${category}</h2>
-            <a href="../products/${category}.html" class="btn btn-home mr-2">View All</a>
+            <a href="../products/${category}.php" class="btn btn-home mr-2">View All</a>
         </div>
         <div id="${category}-carousel" class="carousel w-full relative"></div>
     `;
@@ -344,7 +344,7 @@ document.addEventListener("DOMContentLoaded", function () {
         loginButton.style.display = 'none';
         registerButton.style.display = 'none';
 
-        fetch(`http://localhost:3000/api/user/details`, {
+        fetch(`https://microbeecomputers.lk/api/user/details`, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
             }
@@ -443,7 +443,7 @@ document.addEventListener("DOMContentLoaded", function () {
         setTimeout(() => {
             loginAlert.classList.remove('show');
             loginAlert.classList.add('hidden');
-            window.location.href = '../auth/login.html';
+            window.location.href = '../auth/login.php';
         }, 2000);
     }
 
@@ -462,7 +462,7 @@ document.addEventListener("DOMContentLoaded", function () {
             quantity: 1
         };
 
-        fetch(`http://localhost:3000/api/cart/add`, {
+        fetch(`https://microbeecomputers.lk/api/cart/add`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -500,5 +500,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function redirectToProductPage(productId) {
-    window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
+    window.location.href = `../products/products_info/product-info.php?pro_id=${productId}`;
 }

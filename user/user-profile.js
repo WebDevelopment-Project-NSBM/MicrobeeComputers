@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const searchDropdown = document.getElementById('searchDropdown');
 
     if (!authToken) {
-        window.location.href = '../auth/login.html';
+        window.location.href = '../auth/login.php';
         return;
     }
 
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch(`http://localhost:3000/api/search?query=${encodeURIComponent(query)}`)
+        fetch(`https://microbeecomputers.lk/api/search?query=${encodeURIComponent(query)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function showLogoutMessage(message) {
         showTokenExpireLogOutAlert(message);
         setTimeout(() => {
-            window.location.href = '../auth/login.html';
+            window.location.href = '../auth/login.php';
         }, 1000);
     }
 
@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchUserProfile() {
         showLoadingBar();
-        fetch(`http://localhost:3000/api/user/profile`, {
+        fetch(`https://microbeecomputers.lk/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -197,12 +197,12 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutAlert.classList.remove('hidden');
         setTimeout(() => {
             logoutAlert.classList.add('hidden');
-            window.location.href = '../auth/login.html';
+            window.location.href = '../auth/login.php';
         }, 1000);
     }
 
     function handleLogout() {
-        fetch(`http://localhost:3000/api/logout`, {
+        fetch(`https://microbeecomputers.lk/api/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details`, {
+        fetch(`https://microbeecomputers.lk/api/user/details`, {
             headers: {
                 'Authorization': `Bearer ${authToken}`
             }
@@ -291,7 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {
     categories.forEach(category => {
         const li = document.createElement('li');
         li.className = "side-panel-li";
-        li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+        li.innerHTML = `<a href="../products/${category}.php" class="side-panel-a">${category}</a>`;
         categoryList.appendChild(li);
     });
 
@@ -305,5 +305,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function redirectToProductPage(productId) {
-    window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
+    window.location.href = `../products/products_info/product-info.php?pro_id=${productId}`;
 }

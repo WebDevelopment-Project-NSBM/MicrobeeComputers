@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Orders</title>
+    <title>Shopping Cart</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="../styles/style.css" rel="stylesheet">
-    <script src="./order-panel.js"></script>
+    <script src="cart.js"></script>
 </head>
 
 <body>
@@ -18,11 +18,11 @@
     <header class="relative w-full">
         <div class="bg-yellow-500 py-2 hidden md:block">
             <div class="container-fluid mx-auto flex justify-center md:justify-center space-x-4">
-                <a class="link link-secondary text-black" href="../products/coolers.html">Coolers</a>
-                <a class="link link-secondary text-black" href="../products/motherboards.html">MotherBoards</a>
-                <a class="link link-secondary text-black" href="../products/powersupply.html">PowerSupplys</a>
-                <a class="link link-secondary text-black" href="../products/casing.html">Casings</a>
-                <a class="link link-secondary text-black" href="../products/storage.html">Storages</a>
+                <a class="link link-secondary text-black" href="../products/coolers.php">Coolers</a>
+                <a class="link link-secondary text-black" href="../products/motherboards.php">MotherBoards</a>
+                <a class="link link-secondary text-black" href="../products/powersupply.php">PowerSupplys</a>
+                <a class="link link-secondary text-black" href="../products/casing.php">Casings</a>
+                <a class="link link-secondary text-black" href="../products/storage.php">Storages</a>
             </div>
         </div>
         <div class="container-fluid mx-auto flex flex-wrap justify-center items-center mt-4 md:mt-0">
@@ -42,18 +42,14 @@
                     </div>
                 </div>
                 <div class="auth flex items-center space-x-2">
-                    <a href="../home.html" class="btn btn-home mr-2">Home</a>
-                    <a href="../admin/user-management.html" class="btn btn-home mr-2">Users</a>
-                    <a href="../admin/add-product.html" class="btn btn-home mr-2">Add Products</a>
-                    <a href="../admin/product-management.html" class="btn btn-home mr-2">Products</a>
-                    <a href="../admin/contactusview.html" class="btn btn-home mr-2">ContactUs</a>
-                    <a href="../auth/login.html" class="btn btn-home mr-2">
+                    <a href="../home.php" class="btn btn-home mr-2">Home</a>
+                    <a href="../auth/login.php" class="btn btn-home mr-2">
                         <i class="fas fa-sign-in-alt mr-1"></i> Log In
                     </a>
-                    <a href="../auth/register.html" class="btn btn-home mr-2">
+                    <a href="../auth/register.php" class="btn btn-home mr-2">
                         <i class="fas fa-user-plus mr-1"></i> Register
                     </a>
-                    <a href="../user/cart.html" class="btn btn-cart btn-warning mr-2">
+                    <a href="../user/cart.php" class="btn btn-cart btn-warning mr-2">
                         <i class="fas fa-shopping-cart"></i>
                     </a>
                     <div class="dropdown relative">
@@ -66,9 +62,9 @@
                         <ul tabindex="0"
                             class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow absolute">
                             <li id="user-profile-dropdown" style="display: none;"><a
-                                    href="../user/user-profile.html">Profile</a></li>
+                                    href="../user/user-profile.php">Profile</a></li>
                             <li id="admin-profile-dropdown" style="display: none;"><a
-                                    href="../admin/user-management.html">Admin Profile</a></li>
+                                    href="../admin/user-management.php">Admin Profile</a></li>
                             <li><a id="logoutButton" href="#">Logout</a></li>
                         </ul>
                     </div>
@@ -77,8 +73,16 @@
         </div>
     </header>
 
+    <nav class="bg-gray-800 text-white py-2">
+        <div class="container mx-auto">
+            <a href="#" class="text-white">Home</a> / <a href="#" class="text-white nav-g-cat">Cart</a>
+        </div>
+    </nav>
     <div id="logoutAlert" class="hidden fixed top-0 left-0 right-0 bg-yellow-500 text-black text-center py-2">
         Logout successful!
+    </div>
+    <div id="loginAlert" class="hidden fixed top-0 left-0 right-0 bg-green-500 text-white text-center py-2">
+        Login required. Redirecting to login page...
     </div>
 
     <!-- Side Panel -->
@@ -93,36 +97,16 @@
         </nav>
     </div>
 
-    <div id="adminContent" class="container mx-auto mt-5">
-        <div class="container mx-auto mt-5">
-            <h2 class="text-center text-3xl font-bold mb-6">User Orders</h2>
-
-            <div class="flex justify-end mb-4">
-                <div class="relative w-full md:w-1/3">
-                    <input type="text" id="searchUserId" placeholder="Search by User ID"
-                        class="input input-bordered w-full pr-10">
-                    <i id="searchUserButton"
-                        class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-gray-600"></i>
-                </div>
-            </div>
-
-            <div id="cartCustomModal" class="custom-modal custom-hidden">
-                <div class="custom-modal-content">
-                    <span id="closeCustomModal" class="custom-modal-close">&times;</span>
-                    <h2>Cart Items</h2>
-                    <div id="cartItemsContainer"></div>
-                </div>
-            </div>
-
-            <div id="userListContainer" class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- List of users will be inserted here -->
-            </div>
-            <nav aria-label="Page navigation" class="mt-4 flex justify-center">
-                <ul class="pagination justify-center" id="userPaginationContainer">
-                    <!-- Pagination buttons will be inserted here -->
-                </ul>
-            </nav>
+    <div class="container mx-auto mt-5">
+        <h2>Shopping Cart</h2>
+        <div class="flex flex-wrap justify-center" id="cartItems">
+            <!-- Cart items will be dynamically inserted here -->
         </div>
+        <nav aria-label="Page navigation" class="pagination-container mt-4">
+            <ul class="pagination" id="paginationContainer">
+                <!-- Page navigation for each button -->
+            </ul>
+        </nav>
     </div>
 </body>
 

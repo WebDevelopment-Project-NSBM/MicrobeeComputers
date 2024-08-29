@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         logoutAlert.classList.remove('hidden');
         setTimeout(() => {
             logoutAlert.classList.add('hidden');
-            window.location.href = 'login.html';
+            window.location.href = 'login.php';
         }, 1000);
     }
 
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
-            fetch(`http://localhost:3000/api/login`, {
+            fetch(`https://microbeecomputers.lk/api/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -75,9 +75,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (data.success) {
                         localStorage.setItem('authToken', data.token);
                         if (data.admin) {
-                            showSuccessMessageLogin('Login successful! Redirecting to Admin Panel', '../admin/user-management.html');
+                            showSuccessMessageLogin('Login successful! Redirecting to Admin Panel', '../admin/user-management.php');
                         } else {
-                            showSuccessMessageLogin('Login successful! Redirecting to User Panel', '../user/user-profile.html');
+                            showSuccessMessageLogin('Login successful! Redirecting to User Panel', '../user/user-profile.php');
                         }
                     } else {
                         showErrorMessage('Login failed: ' + data.message);
@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            fetch(`http://localhost:3000/api/register`, {
+            fetch(`https://microbeecomputers.lk/api/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        showSuccessMessageLogin('Registration successful! Redirecting to Login', 'login.html');
+                        showSuccessMessageLogin('Registration successful! Redirecting to Login', 'login.php');
                     } else if (data.message === 'User already exists') {
                         showErrorMessage('Account already exists');
                     } else {
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details`, {
+        fetch(`https://microbeecomputers.lk/api/user/details`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${authToken}`

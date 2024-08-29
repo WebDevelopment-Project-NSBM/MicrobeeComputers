@@ -22,5 +22,5 @@ This repository contains NSBM University 23.2 Group Web Assignment Webpage
 - `npm install` and press enter.
 - `node .` to start the API Server.
 - Type the above commands to start the API server
-- To open the website go to `src/structures/home.html` open this file.
+- To open the website go to xampp and put this files and run the server
 

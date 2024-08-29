@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let users = [];
 
     if (!authToken) {
-        window.location.href = '../auth/login.html';
+        window.location.href = '../auth/login.php';
         return;
     }
 
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function showLogoutMessage(message) {
         showTokenExpireLogOutAlert(message);
         setTimeout(() => {
-            window.location.href = '../auth/login.html';
+            window.location.href = '../auth/login.php';
         }, 1000);
     }
 
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetch(`http://localhost:3000/api/search?query=${encodeURIComponent(query)}`)
+        fetch(`https://microbeecomputers.lk/api/search?query=${encodeURIComponent(query)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function handleLogout() {
-        fetch(`http://localhost:3000/api/logout`, {
+        fetch(`https://microbeecomputers.lk/api/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function fetchUserProfile() {
         showLoadingBar();
-        fetch(`http://localhost:3000/api/user/profile`, {
+        fetch(`https://microbeecomputers.lk/api/user/profile`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -166,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         adminContent.innerHTML = `
                         <div class="container mx-auto text-center mt-5">
                             <h1 class="text-3xl font-bold mb-4">You are not an admin user</h1>
-                            <a href="../home.html" class="btn btn-primary">Home</a>
+                            <a href="../home.php" class="btn btn-primary">Home</a>
                         </div>
                     `;
                         return;
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchAllUsers() {
-        fetch('http://localhost:3000/api/users', {
+        fetch('https://microbeecomputers.lk/api/users', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function deleteUser(userId) {
         try {
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
+            const requestingUser = await fetch(`https://microbeecomputers.lk/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -310,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const response = await fetch(`http://localhost:3000/api/user/delete/${userId}`, {
+            const response = await fetch(`https://microbeecomputers.lk/api/user/delete/${userId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
 
         try {
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
+            const requestingUser = await fetch(`https://microbeecomputers.lk/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 admin: formData.get('admin') === 'on'
             };
 
-            const response = await fetch('http://localhost:3000/api/register', {
+            const response = await fetch('https://microbeecomputers.lk/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -403,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
         event.preventDefault();
 
         try {
-            const requestingUser = await fetch(`http://localhost:3000/api/user/profile`, {
+            const requestingUser = await fetch(`https://microbeecomputers.lk/api/user/profile`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -428,7 +428,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 admin: formData.get('admin') === 'on'
             };
 
-            const response = await fetch(`http://localhost:3000/api/user/edit/${userId}`, {
+            const response = await fetch(`https://microbeecomputers.lk/api/user/edit/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -459,7 +459,7 @@ document.addEventListener("DOMContentLoaded", function () {
             button.style.display = 'none';
         });
 
-        fetch(`http://localhost:3000/api/user/details`, {
+        fetch(`https://microbeecomputers.lk/api/user/details`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${authToken}`
@@ -576,7 +576,7 @@ document.addEventListener("DOMContentLoaded", function () {
     categories.forEach(category => {
         const li = document.createElement('li');
         li.className = "side-panel-li";
-        li.innerHTML = `<a href="../products/${category}.html" class="side-panel-a">${category}</a>`;
+        li.innerHTML = `<a href="../products/${category}.php" class="side-panel-a">${category}</a>`;
         categoryList.appendChild(li);
     });
 
@@ -621,5 +621,5 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function redirectToProductPage(productId) {
-    window.location.href = `../products/products_info/product-info.html?pro_id=${productId}`;
+    window.location.href = `../products/products_info/product-info.php?pro_id=${productId}`;
 }
