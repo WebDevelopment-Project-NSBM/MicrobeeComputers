@@ -146,8 +146,8 @@ document.addEventListener("DOMContentLoaded", function () {
         const paginatedProducts = products.slice(start, end);
 
         paginatedProducts.forEach(product => {
-            const originalPrice = product.price + (product.discountRate / 100 * product.price);
-            const discountPrice = product.price;
+            const discountPrice = product.price - (product.discountRate / 100 * product.price);
+            const originalPrice = product.price;
             const isLongName = product.name.length > 25;
             let displayName;
             if (product.name.length > 75) {

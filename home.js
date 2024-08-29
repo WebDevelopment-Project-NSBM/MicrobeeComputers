@@ -195,8 +195,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function createProductCard(product) {
-        const originalPrice = product.price + (product.discountRate / 100 * product.price);
-        const discountPrice = product.price;
+        const discountPrice = product.price - (product.discountRate / 100 * product.price);
+        const originalPrice = product.price;
         const isLongName = product.name.length > 25;
         let displayName = product.name;
 

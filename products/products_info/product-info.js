@@ -195,8 +195,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function renderProductDetails(product) {
-        const originalPrice = product.price + (product.discountRate / 100 * product.price);
-        const discountPrice = product.price;
+        const discountPrice = product.price - (product.discountRate / 100 * product.price);
+        const originalPrice = product.price;
 
         const productHTML = `
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
