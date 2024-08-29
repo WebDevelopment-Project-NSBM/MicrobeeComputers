@@ -75,6 +75,7 @@
         </div>
     </header>
     <?php
+    echo "testing"
     ?>
 
     <nav class="bg-gray-800 text-white py-2">
