@@ -74,6 +74,8 @@
             </div>
         </div>
     </header>
+    <?php
+    ?>
 
     <nav class="bg-gray-800 text-white py-2">
         <div class="container mx-auto">
