@@ -358,7 +358,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <div class="cart-item">
                 <p><strong>Name:</strong> ${item.name}</p>
                 <p><strong>Category:</strong> ${item.category}</p>
-                <p><strong>Price:</strong> $${item.price.toFixed(2)}</p>
+                <p><strong>Price:</strong> Rs: ${item.price.toFixed(2)}</p>
                 <p><strong>Quantity:</strong> ${item.quantity}</p>
             </div>
             <hr>
