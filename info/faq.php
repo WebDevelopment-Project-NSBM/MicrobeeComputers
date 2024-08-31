@@ -76,7 +76,7 @@
 
     <nav class="bg-gray-800 text-white py-2">
         <div class="container mx-auto">
-            <a href="#" class="text-white">Home</a> / <a href="#" class="text-white nav-g-cat">About Us</a>
+            <a href="#" class="text-white">Home</a> / <a href="#" class="text-white nav-g-cat">FAQ</a>
         </div>
     </nav>
 
